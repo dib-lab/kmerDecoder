@@ -13,7 +13,7 @@ Use the generated static lib either using Cmake `add_subdirectory()` or by linki
 
 ## Usage Example
 
-```cpp=
+```cpp
 
 #include "inputModule.hpp"
 
