@@ -3,13 +3,9 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/675f273c446f45bebb5b8e354e24bccb)](https://app.codacy.com/app/mr-eyes/kmerDecoder?utm_source=github.com&utm_medium=referral&utm_content=mr-eyes/kmerDecoder&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/mr-eyes/kmerDecoder.svg?branch=master)](https://travis-ci.org/mr-eyes/kmerDecoder)
 
-
 ## Build
 
 Use the generated static lib either using Cmake `add_subdirectory()` or by linking to compilation command.
-
-
-
 
 ## Usage Example
 
@@ -42,8 +38,10 @@ KDecoder *KMERS = new Kmers(kSize);
 for(const auto &kmer : *KMERS->getKmers(seq))
     std::cout << kmer << std::endl;
 ```
+
 Output:
-```shell=
+
+```shell
 ACGTAGCATGCATGA
 CGTAGCATGCATGAC
 GTAGCATGCATGACG
@@ -67,8 +65,10 @@ KDecoder *SKIPMERS = new Skipmers(sk_m,sk_n,sk_k);
 for(const auto &kmer : *SKIPMERS->getKmers(seq))
     std::cout << kmer << std::endl;
 ```
+
 Output:
-```shell=
+
+```shell
 ACTACAGCTG
 CTACAGCTGC
 TACAGCTGCG
@@ -104,10 +104,15 @@ KDecoder *MINIMZERS = new Minimzers(min_k,min_w);
 
 for(const auto &kmer : *MINIMZERS->getKmers(seq))
     std::cout << kmer << std::endl;
+
 ```
+
 Output:
-```
+
+```text
+
 ACGAT
 ACGTA
 AGCAT
+
 ```

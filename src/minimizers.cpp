@@ -27,16 +27,7 @@ using std::unordered_map;
   --------------------------------------------------------
 */
 
-void Minimzers::kmerize(char *seq, const int &seq_len, const int &k, char **kmers, int &kmer_num)
-{
-    char **ret = new char *[seq_len - k];
-    kmer_num = seq_len - k;
-    for (int i = 0; i < kmer_num; ++i)
-    {
-        ret[i] = new char[k + 1];
-        memcpy(ret[i], seq + i, k);
-    }
-}
+
 /* Returns the forward kmers of a sequence */
 vector<string> Minimzers::kmerize(string seq, int k)
 {

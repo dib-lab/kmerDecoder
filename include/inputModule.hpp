@@ -33,6 +33,7 @@ private:
     int kSize;
 
 public:
+    Kmers(){}
     Kmers(int kSize){
         this->kSize = kSize;
     }
@@ -56,10 +57,10 @@ public:
   Skipmers() {}
   Skipmers(uint8_t m, uint8_t n, uint8_t k)
   {
-    if (n < 1 or n < m or k < m or k > 31 or k % m != 0)
+    if (n < 1 or n < m or k < m or k % m != 0)
     {
       std::cout << "Error: invalid skip-mer shape! m= " << m << " n=" << n << " k= " << k << std::endl
-                << "Conditions: 0 < m <= n, k <= 31 , k must multiple of m." << std::endl;
+                << "Conditions: 0 < m <= n, k must multiple of m." << std::endl;
 
       exit(1);
     }
@@ -67,7 +68,6 @@ public:
     this->m = m;
     this->n = n;
     this->k = k;
-    this->S = k + ((k - 1) / m) * (n - m);
   }
   std::list<std::string>* getKmers(std::string &x);
   virtual ~Skipmers() {}
@@ -105,18 +105,18 @@ private:
 
     mkmh_kmer_list_t(int length, int k)
     {
-      length = length;
-      k = k;
-      kmers = new char *[length];
+      this->length = length;
+      this->k = k;
+      this->kmers = new char *[length];
     };
 
     ~mkmh_kmer_list_t()
     {
-      for (int i = 0; i < length; ++i)
+      for (int i = 0; i < this->length; ++i)
       {
-        delete[] kmers[i];
+        delete[] this->kmers[i];
       }
-      delete[] kmers;
+      delete[] this->kmers;
     };
   };
 
