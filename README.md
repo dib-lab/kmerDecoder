@@ -28,8 +28,8 @@ int sk_n = 3;
 int sk_k = 10
 
 // Minimizers Paramters
-int k = 5
-int w = 10
+int min_k = 5
+int min_w = 10
 
 ```
 
@@ -62,7 +62,7 @@ TGACGATGCTAGCGT
 ### Extract Skipmers
 
 ```cpp
-KDecoder *SKIPMERS = new Skipmers(2,3,10);
+KDecoder *SKIPMERS = new Skipmers(sk_m,sk_n,sk_k);
 
 for(const auto &kmer : *SKIPMERS->getKmers(seq))
     std::cout << kmer << std::endl;
@@ -100,7 +100,7 @@ TACATCTGCT
 ### Extract Minimizers
 
 ```cpp
-KDecoder *MINIMZERS = new Minimzers(5,10);
+KDecoder *MINIMZERS = new Minimzers(min_k,min_w);
 
 for(const auto &kmer : *MINIMZERS->getKmers(seq))
     std::cout << kmer << std::endl;
