@@ -35,7 +35,7 @@ int w = 10
 
 ### Extract Kmers
 
-```cpp=
+```cpp
 
 KDecoder *KMERS = new Kmers(kSize);
 
@@ -99,7 +99,7 @@ TACATCTGCT
 
 ### Extract Minimizers
 
-```cpp=
+```cpp
 KDecoder *MINIMZERS = new Minimzers(5,10);
 
 for(const auto &kmer : *MINIMZERS->getKmers(seq))
