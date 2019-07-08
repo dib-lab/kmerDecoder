@@ -13,7 +13,7 @@
 #include <omp.h>
 #include <assert.h>
 #include <bitset>
-#include "inputModule.hpp"
+#include "kmerDecoder.hpp"
 
 using std::vector;
 using std::queue;
@@ -29,7 +29,7 @@ using std::unordered_map;
 
 
 /* Returns the forward kmers of a sequence */
-vector<string> Minimzers::kmerize(string seq, int k)
+vector<string> Minimizers::kmerize(string seq, int k)
 {
     vector<string> ret(seq.length() - k, "");
 
@@ -45,7 +45,7 @@ vector<string> Minimzers::kmerize(string seq, int k)
     return ret;
 };
 
-Minimzers::mkmh_kmer_list_t Minimzers::kmerize(char *seq, int seq_len, int k)
+Minimizers::mkmh_kmer_list_t Minimizers::kmerize(char *seq, int seq_len, int k)
 {
     mkmh_kmer_list_t ret;
     ret.kmers = new char *[seq_len - k];
@@ -64,7 +64,7 @@ Minimzers::mkmh_kmer_list_t Minimzers::kmerize(char *seq, int seq_len, int k)
 };
 
 /** Returns an mkmh_minimizer struct, equivalent to a tuple(kmer, position, kmer length), for every position in the genome **/
-vector<mkmh_minimizer> Minimzers::kmer_tuples(string seq, int k)
+vector<mkmh_minimizer> Minimizers::kmer_tuples(string seq, int k)
 {
     vector<string> kmers = this->kmerize(seq, k);
     vector<mkmh_minimizer> tups(kmers.size());
@@ -81,7 +81,7 @@ vector<mkmh_minimizer> Minimzers::kmer_tuples(string seq, int k)
 }
 
 template <typename T>
-vector<T> Minimzers::v_set(vector<T> kmers)
+vector<T> Minimizers::v_set(vector<T> kmers)
 {
     set<T> s = set<T>(kmers.begin(), kmers.end());
     vector<T> ret = vector<T>(s.begin(), s.end());
@@ -89,7 +89,7 @@ vector<T> Minimzers::v_set(vector<T> kmers)
 }
 
 /** Finds the (w, k) minimizers of a string **/
-vector<mkmh_minimizer> Minimzers::getMinimizers(string &seq)
+vector<mkmh_minimizer> Minimizers::getMinimizers(string &seq)
 {
     vector<mkmh_minimizer> ret;
     vector<mkmh_minimizer> kmert = kmer_tuples(seq, this->k);
@@ -104,22 +104,38 @@ vector<mkmh_minimizer> Minimzers::getMinimizers(string &seq)
     return v_set(ret);
 }
 
-std::list<std::string>* Minimzers::getKmers(std::string &seq)
+void Minimizers::extractKmers()
 {
     vector<mkmh_minimizer> ret;
-    vector<mkmh_minimizer> kmert = kmer_tuples(seq, this->k);
-    int i = 0;
-    for (i = 0; i + this->w < kmert.size(); ++i)
-    {
-        // get and sort kmers in window (i, i + w)
-        vector<mkmh_minimizer> window_kmers(kmert.begin() + i, kmert.begin() + i + this->w);
-        std::sort(window_kmers.begin(), window_kmers.end());
-        ret.push_back(*(window_kmers.begin()));
-    }
-    for (auto z : v_set(ret))
-    {
-        this->kmers.push_back(z.seq);
+    vector<mkmh_minimizer> kmert;
+
+
+    std::vector<std::string> extracted_kmers;
+    std::string id;
+    std::string seq;
+
+    for(int seq_num = 0; seq_num < this->chunk_size; seq_num++) {
+
+        id = std::string((char *) seqan::toCString(this->ids[seq_num]));
+        seq = std::string((char *) seqan::toCString(this->seqs[seq_num]));
+        kmert = kmer_tuples(seq, this->k);
+
+        for (unsigned long i = 0; i + this->w < kmert.size(); ++i)
+        {
+            // get and sort kmers in window (i, i + w)
+            vector<mkmh_minimizer> window_kmers(kmert.begin() + i, kmert.begin() + i + this->w);
+            std::sort(window_kmers.begin(), window_kmers.end());
+            ret.push_back(*(window_kmers.begin()));
+        }
+
+        for (auto z : v_set(ret))
+        {
+            extracted_kmers.push_back(z.seq);
+        }
+
+        this->kmers[id] = extracted_kmers;
+        extracted_kmers.clear();
+
     }
 
-    return &this->kmers;
 }

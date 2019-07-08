@@ -3,6 +3,10 @@
 #include <vector>
 #include <set>
 #include <list>
+#include <seqan/seq_io.h>
+#include <parallel_hashmap/phmap.h>
+
+using phmap::flat_hash_map;
 
 /* 
 --------------------------------------------------------
@@ -10,13 +14,30 @@
 --------------------------------------------------------
 */
 
-class KDecoder{
+class kmerDecoder{
+
+protected:
+    seqan::CharString seqFileName;
+
+    const int chunk_size = 10000;
+    seqan::StringSet<seqan::CharString> ids;
+    seqan::StringSet<seqan::CharString> seqs;
+    flat_hash_map<std::string,std::vector<std::string>> kmers;
+    bool seqan_end = 1;
+
+
+    void initialize_seqan();
+    void set_fileName(std::string);
 
 public:
-    std::list<std::string> kmers;
 
-public:
-    virtual std::list<std::string>* getKmers(std::string &seq) = 0;
+    flat_hash_map<std::string,std::vector<std::string>>* getKmers();
+    virtual void extractKmers() = 0;
+    kmerDecoder & operator++();
+    bool end();
+    void next_chunk();
+    seqan::SeqFileIn seqFileIn;
+
 };
 
 
@@ -27,17 +48,20 @@ public:
 */
 
 
-class Kmers : public KDecoder{
+class Kmers : public kmerDecoder{
 
 private:
     int kSize;
 
 public:
-    Kmers(){}
-    Kmers(int kSize){
+
+    Kmers(std::string filename, int kSize){
         this->kSize = kSize;
+        this->set_fileName(filename);
+        this->initialize_seqan();
     }
-    std::list<std::string>* getKmers(std::string &seq);
+
+    void extractKmers();
 };
 
 
@@ -47,15 +71,14 @@ public:
 --------------------------------------------------------
 */
 
-class Skipmers : public KDecoder
+class Skipmers : public kmerDecoder
 {
 private:
   int m, n, k;
   int S;
 
 public:
-  Skipmers() {}
-  Skipmers(uint8_t m, uint8_t n, uint8_t k)
+  Skipmers(std::string filename, uint8_t m, uint8_t n, uint8_t k)
   {
     if (n < 1 or n < m or k < m or k % m != 0)
     {
@@ -68,8 +91,11 @@ public:
     this->m = m;
     this->n = n;
     this->k = k;
+  this->set_fileName(filename);
+  this->initialize_seqan();
   }
-  std::list<std::string>* getKmers(std::string &x);
+
+  void extractKmers();
   virtual ~Skipmers() {}
 };
 
@@ -89,7 +115,7 @@ typedef struct mkmh_minimizer
 } mkmh_minimizer;
 
 
-class Minimzers : public KDecoder
+class Minimizers : public kmerDecoder
 {
 private:
   int k, w;
@@ -129,15 +155,18 @@ protected:
   std::vector<T> v_set(std::vector<T> kmers);
 
 public:
-  Minimzers() {}
-  Minimzers(int k, int w)
+  Minimizers() {}
+  Minimizers(std::string filename, int k, int w)
   {
     this->k = k;
     this->w = w;
+    this->set_fileName(filename);
+    this->initialize_seqan();
   }
 
   std::vector<mkmh_minimizer> getMinimizers(std::string &seq);
-  std::list<std::string>* getKmers(std::string &x);
 
-  virtual ~Minimzers(){};
+  void extractKmers();
+
+  virtual ~Minimizers(){};
 };
