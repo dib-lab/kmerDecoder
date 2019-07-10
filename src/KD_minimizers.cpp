@@ -110,11 +110,11 @@ void Minimizers::extractKmers()
     vector<mkmh_minimizer> kmert;
 
 
-    std::vector<std::string> extracted_kmers;
+
     std::string id;
     std::string seq;
 
-    for(int seq_num = 0; seq_num < this->chunk_size; seq_num++) {
+    for(unsigned long seq_num =0; seq_num < seqan::length(this->ids); seq_num++) {
 
         id = std::string((char *) seqan::toCString(this->ids[seq_num]));
         seq = std::string((char *) seqan::toCString(this->seqs[seq_num]));
@@ -130,11 +130,8 @@ void Minimizers::extractKmers()
 
         for (auto z : v_set(ret))
         {
-            extracted_kmers.push_back(z.seq);
+            this->kmers[id].push_back(z.seq);
         }
-
-        this->kmers[id] = extracted_kmers;
-        extracted_kmers.clear();
 
     }
 
