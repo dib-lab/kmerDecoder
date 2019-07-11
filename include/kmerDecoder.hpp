@@ -17,7 +17,7 @@ using phmap::flat_hash_map;
 class kmerDecoder {
 
 protected:
-    const int chunk_size = 10000;
+    unsigned int chunk_size;
     seqan::StringSet<seqan::CharString> ids;
     seqan::StringSet<seqan::CharString> seqs;
     flat_hash_map<std::string, std::vector<std::string>> kmers;
@@ -47,13 +47,14 @@ public:
 class Kmers : public kmerDecoder {
 
 private:
-    int kSize;
+    unsigned kSize;
 
 public:
 
-    Kmers(seqan::SeqFileIn &SeqIn, int kSize) {
+    Kmers(seqan::SeqFileIn &SeqIn, unsigned int chunk_size, int kSize) {
         this->kSize = kSize;
         this->seqFileIn = &SeqIn;
+        this->chunk_size = chunk_size;
     }
 
     void extractKmers();
@@ -72,7 +73,7 @@ private:
     int S;
 
 public:
-    Skipmers(seqan::SeqFileIn &SeqIn, uint8_t m, uint8_t n, uint8_t k) {
+    Skipmers(seqan::SeqFileIn &SeqIn, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k) {
         if (n < 1 or n < m or k < m or k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape! m= " << m << " n=" << n << " k= " << k << std::endl
                       << "Conditions: 0 < m <= n, k must multiple of m." << std::endl;
@@ -83,6 +84,7 @@ public:
         this->n = n;
         this->k = k;
         this->seqFileIn = &SeqIn;
+        this->chunk_size = chunk_size;
     }
 
     void extractKmers();
@@ -148,10 +150,11 @@ protected:
 public:
     Minimizers() {}
 
-    Minimizers(seqan::SeqFileIn &SeqIn, int k, int w) {
+    Minimizers(seqan::SeqFileIn &SeqIn, unsigned int chunk_size, int k, int w) {
         this->k = k;
         this->w = w;
         this->seqFileIn = &SeqIn;
+        this->chunk_size = chunk_size;
     }
 
     std::vector<mkmh_minimizer> getMinimizers(std::string &seq);

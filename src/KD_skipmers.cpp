@@ -11,6 +11,8 @@ void Skipmers::extractKmers()
 
         id = std::string((char*)seqan::toCString(this->ids[seq_num]));
         seq = std::string((char*)seqan::toCString(this->seqs[seq_num]));
+        
+        this->kmers[id].reserve(seq.size());
 
         for(int start = 0; start < 3; start++){
 

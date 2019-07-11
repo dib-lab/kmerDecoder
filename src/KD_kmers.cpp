@@ -7,6 +7,9 @@ void Kmers::extractKmers(){
     std::string seq;
 
     for(unsigned seq_num = 0; seq_num < seqan::length(this->ids); seq_num++){
+
+        if(seqan::length(this->seqs[seq_num]) < this->kSize) continue; 
+
         seq = std::string((char*)seqan::toCString(this->seqs[seq_num]));
         id =  std::string((char*)seqan::toCString(this->ids[seq_num]));
 

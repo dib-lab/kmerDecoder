@@ -1,7 +1,5 @@
 #include <vector>
-#include <queue>
 #include <set>
-#include <unordered_map>
 #include <string>
 #include <cstring>
 #include <sstream>
@@ -11,15 +9,13 @@
 #include <algorithm>
 #include <assert.h>
 #include <omp.h>
-#include <assert.h>
 #include <bitset>
 #include "kmerDecoder.hpp"
 
 using std::vector;
-using std::queue;
 using std::string;
 using std::set;
-using std::unordered_map;
+
 
 /* 
   --------------------------------------------------------
@@ -118,6 +114,8 @@ void Minimizers::extractKmers()
 
         id = std::string((char *) seqan::toCString(this->ids[seq_num]));
         seq = std::string((char *) seqan::toCString(this->seqs[seq_num]));
+        this->kmers[id].reserve(seq.size());
+
         kmert = kmer_tuples(seq, this->k);
 
         for (unsigned long i = 0; i + this->w < kmert.size(); ++i)
