@@ -1,0 +1,6 @@
+[submodule "lib/seqan"]
+	path = lib/seqan
+	url = https://github.com/seqan/seqan
+[submodule "lib/parallel-hashmap"]
+	path = lib/parallel-hashmap
+	url = https://github.com/greg7mdp/parallel-hashmap.git

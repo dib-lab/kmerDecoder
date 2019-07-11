@@ -3,45 +3,101 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/675f273c446f45bebb5b8e354e24bccb)](https://app.codacy.com/app/mr-eyes/kmerDecoder?utm_source=github.com&utm_medium=referral&utm_content=mr-eyes/kmerDecoder&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/mr-eyes/kmerDecoder.svg?branch=master)](https://travis-ci.org/mr-eyes/kmerDecoder)
 
-## Build
+## Quick Setup (using CMake)
+
+Create `CMakeLists.txt` file in your project directory
+
+```cmake
+cmake_minimum_required (VERSION 3.4)
+project (KD_Test C CXX)
+
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fopenmp")
+
+add_subdirectory(kmerDecoder)
+
+add_executable (kdtest ${CPP_SOURCE_FILE})
+
+target_link_libraries(kdtest kmerDecoder)
+
+```
 
 Use the generated static lib either using Cmake `add_subdirectory()` or by linking to compilation command.
 
 ## Usage Example
 
-```cpp
+create `sample.fa`
 
-#include "inputModule.hpp"
-
-std::string seq = "ACGTAGCATGCATGACGATGCTAGCGT";
-
-// Kmers Parameters
-int kSize = 15; // kmer size
-
-// Skipmers Parameters
-int sk_m = 2;
-int sk_n = 3;
-int sk_k = 10
-
-// Minimizers Paramters
-int min_k = 5
-int min_w = 10
-
+```fasta
+>SAMPLE
+ACGTAGCATGCATGACGATGCTAGCGT
 ```
 
-### Extract Kmers
-
 ```cpp
+#include "kmerDecoder.hpp"
 
-KDecoder *KMERS = new Kmers(kSize);
+void extract(kmerDecoder *KD);
 
-for(const auto &kmer : *KMERS->getKmers(seq))
-    std::cout << kmer << std::endl;
+int main() {
+  std::string filename = "sample.fa";
+  unsigned int chunk_size = 1;
+
+  // Create three Seqan objects for the same file
+  seqan::SeqFileIn SeqIn_kmers;
+  seqan::SeqFileIn SeqIn_skipmers;
+  seqan::SeqFileIn SeqIn_minimizers;
+
+  // Initialize Seqan for the three modes
+  seqan::open(SeqIn_kmers, seqan::toCString(filename));
+  seqan::open(SeqIn_skipmers, seqan::toCString(filename));
+  seqan::open(SeqIn_minimizers, seqan::toCString(filename));
+
+  /*
+  Create three kmerDecoder objects
+  */
+
+  // 1- Kmers Mode > Kmers(seqan_object, chunk_size, kSize)
+  kmerDecoder *KMERS = new Kmers(SeqIn_kmers, chunk_size, 15);
+
+  // 2- Skipmers Mode > Skipmers(seqan_object, chunk_size, m, n, k)
+  kmerDecoder *SKIPMERS = new Skipmers(SeqIn_skipmers, chunk_size, 2, 3, 10);
+
+  // 3- Minimizers Mode > Minimizers(seqan_object, chunk_size, k, w)
+  kmerDecoder *MINIMIZERS = new Minimizers(SeqIn_minimizers, chunk_size, 5, 10);
+
+  // Start Extraction
+
+  std::cout << "Mode: Kmers" << "\n";
+  extract(KMERS);
+  std::cout << "------------------------------------" << std::endl;
+
+  std::cout << "Mode: Skipmers" << "\n";
+  extract(SKIPMERS);
+  std::cout << "------------------------------------" << std::endl;
+
+  std::cout << "Mode: Minimizers" << "\n";
+  extract(MINIMIZERS);
+  std::cout << "------------------------------------" << std::endl;
+}
+
+void extract(kmerDecoder *KD) {
+  while (!KD->end()) {
+    KD->next_chunk();
+
+    for (const auto &seq : *KD->getKmers()) {
+      std::cout << "Read ID: " << seq.first << std::endl;
+      for (const auto &kmer : seq.second) {
+        std::cout << kmer << std::endl;
+      }
+    }
+  }
+}
 ```
 
-Output:
+### Output
 
-```shell
+```text
+Mode: Kmers
+Read ID: SAMPLE
 ACGTAGCATGCATGA
 CGTAGCATGCATGAC
 GTAGCATGCATGACG
@@ -55,20 +111,9 @@ GCATGACGATGCTAG
 CATGACGATGCTAGC
 ATGACGATGCTAGCG
 TGACGATGCTAGCGT
-```
-
-### Extract Skipmers
-
-```cpp
-KDecoder *SKIPMERS = new Skipmers(sk_m,sk_n,sk_k);
-
-for(const auto &kmer : *SKIPMERS->getKmers(seq))
-    std::cout << kmer << std::endl;
-```
-
-Output:
-
-```shell
+------------------------------------
+Mode: Skipmers
+Read ID: SAMPLE
 ACTACAGCTG
 CTACAGCTGC
 TACAGCTGCG
@@ -95,24 +140,10 @@ TGATACATCT
 GATACATCTG
 ATACATCTGC
 TACATCTGCT
-```
-
-### Extract Minimizers
-
-```cpp
-KDecoder *MINIMZERS = new Minimzers(min_k,min_w);
-
-for(const auto &kmer : *MINIMZERS->getKmers(seq))
-    std::cout << kmer << std::endl;
-
-```
-
-Output:
-
-```text
-
+------------------------------------
+Mode: Minimizers
+Read ID: SAMPLE
 ACGAT
 ACGTA
 AGCAT
-
 ```
