@@ -31,6 +31,7 @@ public:
     flat_hash_map<std::string, std::vector<std::string>> *getKmers();
 
     virtual void extractKmers() = 0;
+    virtual int get_kSize() = 0;
 
     bool end();
 
@@ -63,6 +64,9 @@ public:
     }
 
     void extractKmers();
+    int get_kSize(){
+        return this->kSize;
+    }
 };
 
 
@@ -94,6 +98,9 @@ public:
     }
 
     void extractKmers();
+    int get_kSize(){
+        return this->k;
+    }
 
     virtual ~Skipmers() {}
 };
@@ -165,6 +172,10 @@ public:
     std::vector<mkmh_minimizer> getMinimizers(std::string &seq);
 
     void extractKmers();
+
+    int get_kSize(){
+        return this->k;
+    }
 
     virtual ~Minimizers() {};
 };
