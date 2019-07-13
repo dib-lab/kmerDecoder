@@ -21,7 +21,9 @@ protected:
     seqan::StringSet<seqan::CharString> ids;
     seqan::StringSet<seqan::CharString> seqs;
     flat_hash_map<std::string, std::vector<std::string>> kmers;
-    seqan::SeqFileIn *seqFileIn;
+    std::string fileName;
+    seqan::SeqFileIn seqFileIn;
+    void initialize_seqan();
     bool seqan_end = false;
 
 public:
@@ -51,10 +53,11 @@ private:
 
 public:
 
-    Kmers(seqan::SeqFileIn &SeqIn, unsigned int chunk_size, int kSize) {
+    Kmers(std::string filename, unsigned int chunk_size, int kSize) {
         this->kSize = kSize;
-        this->seqFileIn = &SeqIn;
+        this->fileName = filename;
         this->chunk_size = chunk_size;
+        this->initialize_seqan();
     }
 
     void extractKmers();
@@ -73,7 +76,7 @@ private:
     int S;
 
 public:
-    Skipmers(seqan::SeqFileIn &SeqIn, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k) {
+    Skipmers(std::string filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k) {
         if (n < 1 or n < m or k < m or k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape! m= " << m << " n=" << n << " k= " << k << std::endl
                       << "Conditions: 0 < m <= n, k must multiple of m." << std::endl;
@@ -83,8 +86,9 @@ public:
         this->m = m;
         this->n = n;
         this->k = k;
-        this->seqFileIn = &SeqIn;
+        this->fileName = filename;
         this->chunk_size = chunk_size;
+        this->initialize_seqan();
     }
 
     void extractKmers();
@@ -148,13 +152,12 @@ protected:
     std::vector<T> v_set(std::vector<T> kmers);
 
 public:
-    Minimizers() {}
-
-    Minimizers(seqan::SeqFileIn &SeqIn, unsigned int chunk_size, int k, int w) {
+    Minimizers(std::string filename, unsigned int chunk_size, int k, int w) {
         this->k = k;
         this->w = w;
-        this->seqFileIn = &SeqIn;
+        this->fileName = filename;
         this->chunk_size = chunk_size;
+        this->initialize_seqan();
     }
 
     std::vector<mkmh_minimizer> getMinimizers(std::string &seq);
