@@ -25,12 +25,14 @@ protected:
     seqan::SeqFileIn seqFileIn;
     void initialize_seqan();
     bool seqan_end = false;
+    virtual void extractKmers() = 0;
 
 public:
 
     flat_hash_map<std::string, std::vector<std::string>> *getKmers();
 
-    virtual void extractKmers() = 0;
+    
+    virtual void seq_to_kmers(std::string & seq, std::vector <std::string> & kmers) = 0;
     virtual int get_kSize() = 0;
 
     bool end();
@@ -53,6 +55,7 @@ class Kmers : public kmerDecoder {
 
 private:
     unsigned kSize;
+    void extractKmers();
 
 public:
 
@@ -63,7 +66,13 @@ public:
         this->initialize_seqan();
     }
 
-    void extractKmers();
+    Kmers(int kSize) {
+        this->kSize = kSize;
+    }
+
+    void seq_to_kmers(std::string & seq, std::vector <std::string> & kmers);
+
+
     int get_kSize(){
         return this->kSize;
     }
@@ -80,8 +89,22 @@ class Skipmers : public kmerDecoder {
 private:
     int m, n, k;
     int S;
+    void extractKmers();
 
 public:
+
+    Skipmers(uint8_t m, uint8_t n, uint8_t k){
+        if (n < 1 or n < m or k < m or k % m != 0) {
+            std::cerr << "Error: invalid skip-mer shape! m= " << m << " n=" << n << " k= " << k << std::endl
+                      << "Conditions: 0 < m <= n, k must multiple of m." << std::endl;
+            exit(1);
+        }
+
+        this->m = m;
+        this->n = n;
+        this->k = k;
+    }
+
     Skipmers(std::string filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k) {
         if (n < 1 or n < m or k < m or k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape! m= " << m << " n=" << n << " k= " << k << std::endl
@@ -97,7 +120,9 @@ public:
         this->initialize_seqan();
     }
 
-    void extractKmers();
+
+    void seq_to_kmers(std::string & seq, std::vector <std::string> & kmers);
+
     int get_kSize(){
         return this->k;
     }
@@ -124,6 +149,7 @@ typedef struct mkmh_minimizer {
 class Minimizers : public kmerDecoder {
 private:
     int k, w;
+    void extractKmers();
 
     struct mkmh_kmer_list_t {
         char **kmers;
@@ -169,9 +195,15 @@ public:
         this->initialize_seqan();
     }
 
+    Minimizers(int k, int w) {
+        this->k = k;
+        this->w = w;
+    }
+
     std::vector<mkmh_minimizer> getMinimizers(std::string &seq);
 
-    void extractKmers();
+
+    void seq_to_kmers(std::string & seq, std::vector <std::string> & kmers);
 
     int get_kSize(){
         return this->k;

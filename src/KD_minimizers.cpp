@@ -134,3 +134,24 @@ void Minimizers::extractKmers()
     }
 
 }
+
+void Minimizers::seq_to_kmers(std::string & seq, std::vector <std::string> & kmers){
+    kmers.clear();
+    kmers.reserve(seq.size());
+
+    vector<mkmh_minimizer> ret;
+    vector<mkmh_minimizer> kmert;
+    kmert = kmer_tuples(seq, this->k);
+    
+    for (unsigned long i = 0; i + this->w < kmert.size(); ++i){
+            // get and sort kmers in window (i, i + w)
+            vector<mkmh_minimizer> window_kmers(kmert.begin() + i, kmert.begin() + i + this->w);
+            std::sort(window_kmers.begin(), window_kmers.end());
+            ret.push_back(*(window_kmers.begin()));
+        }
+
+    for (auto z : v_set(ret)){
+            kmers.push_back(z.seq);
+        }
+
+}

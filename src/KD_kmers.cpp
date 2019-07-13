@@ -1,5 +1,17 @@
 #include "kmerDecoder.hpp"
 
+void Kmers::seq_to_kmers(std::string & seq, std::vector <std::string> & kmers){
+
+    kmers.clear();
+
+    kmers.reserve(seq.size());
+
+    for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++)
+        {
+            kmers.push_back(seq.substr(i, this->kSize));
+        }
+
+}
 
 void Kmers::extractKmers(){
 
