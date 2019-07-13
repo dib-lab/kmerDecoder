@@ -41,28 +41,18 @@ int main() {
   std::string filename = "sample.fa";
   unsigned int chunk_size = 1;
 
-  // Create three Seqan objects for the same file
-  seqan::SeqFileIn SeqIn_kmers;
-  seqan::SeqFileIn SeqIn_skipmers;
-  seqan::SeqFileIn SeqIn_minimizers;
-
-  // Initialize Seqan for the three modes
-  seqan::open(SeqIn_kmers, seqan::toCString(filename));
-  seqan::open(SeqIn_skipmers, seqan::toCString(filename));
-  seqan::open(SeqIn_minimizers, seqan::toCString(filename));
-
   /*
   Create three kmerDecoder objects
   */
 
   // 1- Kmers Mode > Kmers(seqan_object, chunk_size, kSize)
-  kmerDecoder *KMERS = new Kmers(SeqIn_kmers, chunk_size, 15);
+  kmerDecoder *KMERS = new Kmers(filename, chunk_size, 15);
 
   // 2- Skipmers Mode > Skipmers(seqan_object, chunk_size, m, n, k)
-  kmerDecoder *SKIPMERS = new Skipmers(SeqIn_skipmers, chunk_size, 2, 3, 10);
+  kmerDecoder *SKIPMERS = new Skipmers(filename, chunk_size, 2, 3, 10);
 
   // 3- Minimizers Mode > Minimizers(seqan_object, chunk_size, k, w)
-  kmerDecoder *MINIMIZERS = new Minimizers(SeqIn_minimizers, chunk_size, 5, 10);
+  kmerDecoder *MINIMIZERS = new Minimizers(filename, chunk_size, 5, 10);
 
   // Start Extraction
 
