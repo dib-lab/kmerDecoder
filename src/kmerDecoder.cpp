@@ -26,3 +26,7 @@ void kmerDecoder::initialize_seqan(){
 bool kmerDecoder::end(){
     return this->seqan_end;
 }
+
+std::string kmerDecoder::get_filename(){
+    return this->fileName;
+}

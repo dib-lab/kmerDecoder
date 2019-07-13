@@ -36,6 +36,8 @@ public:
 
     void next_chunk();
 
+    std::string get_filename();
+
 };
 
 
