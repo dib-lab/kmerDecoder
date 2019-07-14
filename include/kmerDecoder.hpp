@@ -59,16 +59,14 @@ private:
 
 public:
 
-    Kmers(std::string filename, unsigned int chunk_size, int kSize) {
+    Kmers(const std::string & filename, unsigned int chunk_size, int kSize) {
         this->kSize = kSize;
         this->fileName = filename;
         this->chunk_size = chunk_size;
         this->initialize_seqan();
     }
 
-    Kmers(int kSize) {
-        this->kSize = kSize;
-    }
+    explicit Kmers(int k_size) : kSize(k_size) {};
 
     void seq_to_kmers(std::string & seq, std::vector <std::string> & kmers);
 
@@ -88,7 +86,6 @@ public:
 class Skipmers : public kmerDecoder {
 private:
     int m, n, k;
-    int S;
     void extractKmers();
 
 public:
@@ -105,7 +102,7 @@ public:
         this->k = k;
     }
 
-    Skipmers(std::string filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k) {
+    Skipmers(const std::string & filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k) {
         if (n < 1 or n < m or k < m or k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape! m= " << m << " n=" << n << " k= " << k << std::endl
                       << "Conditions: 0 < m <= n, k must multiple of m." << std::endl;
@@ -187,7 +184,7 @@ protected:
     std::vector<T> v_set(std::vector<T> kmers);
 
 public:
-    Minimizers(std::string filename, unsigned int chunk_size, int k, int w) {
+    Minimizers(const std::string & filename, unsigned int chunk_size, int k, int w) {
         this->k = k;
         this->w = w;
         this->fileName = filename;
