@@ -93,7 +93,7 @@ public:
     Skipmers(uint8_t m, uint8_t n, uint8_t k){
         if (n < 1 || n < m || k < m || k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape!"
-                      << "Conditions: 0 < m <= n < k" << std::endl;
+                      << "Conditions: 0 < m <= n < k & k must be multiple of m" << std::endl;
 
             exit(1);
         }
@@ -106,7 +106,7 @@ public:
     Skipmers(const std::string & filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k) {
         if (n < 1 or n < m || k < m || k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape!"
-                      << "Conditions: 0 < m <= n < k" << std::endl;
+                      << "Conditions: 0 < m <= n < k & k must be multiple of m" << std::endl;
             exit(1);
         }
 
