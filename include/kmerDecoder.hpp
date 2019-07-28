@@ -86,11 +86,12 @@ public:
 class Skipmers : public kmerDecoder {
 private:
     int m, n, k;
+    std::vector<int> ORFs = {0, 1, 2};
     void extractKmers();
 
 public:
 
-    Skipmers(uint8_t m, uint8_t n, uint8_t k){
+    Skipmers(uint8_t m, uint8_t n, uint8_t k, int ORF = 0){
         if (n < 1 || n < m || k < m || k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape!"
                       << "Conditions: 0 < m <= n < k & k must be multiple of m" << std::endl;
@@ -98,16 +99,26 @@ public:
             exit(1);
         }
 
+        if (ORF) {
+            this->ORFs.clear();
+            this->ORFs.push_back(ORF - 1);
+        }
+
         this->m = m;
         this->n = n;
         this->k = k;
     }
 
-    Skipmers(const std::string & filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k) {
+    Skipmers(const std::string & filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k, int ORF = 0) {
         if (n < 1 or n < m || k < m || k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape!"
                       << "Conditions: 0 < m <= n < k & k must be multiple of m" << std::endl;
             exit(1);
+        }
+
+        if (ORF) {
+            this->ORFs.clear();
+            this->ORFs.push_back(ORF - 1);
         }
 
         this->m = m;
@@ -117,7 +128,6 @@ public:
         this->chunk_size = chunk_size;
         this->initialize_seqan();
     }
-
 
     void seq_to_kmers(std::string & seq, std::vector <std::string> & kmers);
 
