@@ -76,7 +76,9 @@ void extract(kmerDecoder *KD) {
     for (const auto &seq : *KD->getKmers()) {
       std::cout << "Read ID: " << seq.first << std::endl;
       for (const auto &kmer : seq.second) {
-        std::cout << kmer << std::endl;
+        std::cout << "str: " << kmer.str << std::endl;
+        std::cout << "hash: " << kmer.hash << std::endl;
+        std::cout << "---------------" << std::endl;
       }
     }
   }
