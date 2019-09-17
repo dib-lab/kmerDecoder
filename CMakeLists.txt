@@ -43,6 +43,8 @@ file(GLOB SOURCES
         "${PROJECT_SOURCE_DIR}/src/KD_kmers.cpp"
         "${PROJECT_SOURCE_DIR}/src/KD_skipmers.cpp"
         "${PROJECT_SOURCE_DIR}/src/KD_minimizers.cpp"
+        "${PROJECT_SOURCE_DIR}/src/HashUtils/hashutil.cpp"
+        "${PROJECT_SOURCE_DIR}/src/Utils/kmer.cpp"
 )
 
 set(PHMAP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib/parallel-hashmap")

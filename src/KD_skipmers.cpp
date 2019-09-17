@@ -1,6 +1,6 @@
 #include "kmerDecoder.hpp"
 
-void Skipmers::seq_to_kmers(std::string & seq, std::vector <std::string> & kmers){
+void Skipmers::seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers){
 
     kmers.clear();
     kmers.reserve(seq.size());
@@ -13,7 +13,10 @@ void Skipmers::seq_to_kmers(std::string & seq, std::vector <std::string> & kmers
         }
 
         for(unsigned long j = 0; j < ORF_SEQ.size() - this->k + 1; j++){
-                kmers.push_back(ORF_SEQ.substr(j,this->k));
+            kmerRow kmer;
+            kmer.str = ORF_SEQ.substr(j,this->k);
+            kmer.hash = this->hasher->hash(kmer.str);
+            kmers.push_back(kmer);
         }
         
         ORF_SEQ.clear();
@@ -41,7 +44,10 @@ void Skipmers::extractKmers()
             }
 
             for(unsigned long j = 0; j < ORF_SEQ.size() - this->k + 1; j++){
-                this->kmers[id].push_back(ORF_SEQ.substr(j,this->k));
+                kmerRow kmer;
+                kmer.str = ORF_SEQ.substr(j,this->k);
+                kmer.hash = this->hasher->hash(kmer.str);
+                this->kmers[id].push_back(kmer);
             }
 
             ORF_SEQ.clear();
