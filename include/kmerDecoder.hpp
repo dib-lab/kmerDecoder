@@ -11,7 +11,7 @@
 using phmap::flat_hash_map;
 
 
-struct kmerRow{
+struct kmer_row{
     std::string str;
     uint64_t hash;
 };
@@ -28,7 +28,7 @@ protected:
     unsigned int chunk_size;
     seqan::StringSet<seqan::CharString> ids;
     seqan::StringSet<seqan::CharString> seqs;
-    flat_hash_map<std::string, std::vector<kmerRow>> kmers;
+    flat_hash_map<std::string, std::vector<kmer_row>> kmers;
     std::string fileName;
     seqan::SeqFileIn seqFileIn;
     void initialize_seqan();
@@ -43,10 +43,10 @@ protected:
 
 public:
 
-    flat_hash_map<std::string, std::vector<kmerRow>> *getKmers();
+    flat_hash_map<std::string, std::vector<kmer_row>> *getKmers();
 
     
-    virtual void seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers) = 0;
+    virtual void seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers) = 0;
     virtual int get_kSize() = 0;
 
     bool end();
@@ -56,6 +56,39 @@ public:
     std::string get_filename();
 
     virtual void setHashingMode(int hash_mode) = 0;
+
+    // hash single kmer
+    uint64_t hash_kmer(std::string kmer_str){
+        return this->hasher->hash(kmer_str);
+    }
+
+
+
+    // Inverse hash single kmer
+    std::string ihash_kmer(uint64_t & kmer_hash){
+        return this->hasher->Ihash(kmer_hash);
+    }
+
+
+    static Hasher * create_hasher(int kmer_size, int hash_mode = 1){
+
+        switch (hash_mode) {
+            case 0:
+                return (new MumurHasher(2038074761));
+            case 1:
+                return (new IntegerHasher(kmer_size));
+            case 2:
+                return (new TwoBitsHasher(kmer_size));
+            default:
+                std::cerr << "Hashing mode : " << hash_mode << ", is not supported \n";
+                std::cerr << "Mode 0: Murmar Hashing | Irreversible\n"
+                             "Mode 1: Integer Hashing | Reversible\n"
+                             "Mode 2: TwoBitsHashing | Not considered hashing, just store the two bits representation\n" <<
+                             "Default: Integer Hashing" << std::endl;
+                exit(1);
+        }
+
+    }
 
 };
 
@@ -70,10 +103,14 @@ public:
 class Kmers : public kmerDecoder {
 
 private:
-    unsigned kSize;
+    unsigned kSize{};
     void extractKmers();
 
 public:
+
+    explicit Kmers(int k_size) : kSize(k_size) {
+        this->hasher = new IntegerHasher(kSize);
+    };
 
     Kmers(const std::string & filename, unsigned int chunk_size, int kSize) {
         this->kSize = kSize;
@@ -100,9 +137,8 @@ public:
         }
     }
 
-    explicit Kmers(int k_size) : kSize(k_size) {};
 
-    void seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers);
+    void seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers);
 
 
     int get_kSize(){
@@ -182,7 +218,7 @@ public:
         }
     }
 
-    void seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers);
+    void seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers);
 
     int get_kSize(){
         return this->k;
@@ -282,7 +318,7 @@ public:
     std::vector<mkmh_minimizer> getMinimizers(std::string &seq);
 
 
-    void seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers);
+    void seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers);
 
     int get_kSize(){
         return this->k;

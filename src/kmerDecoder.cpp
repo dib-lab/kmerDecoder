@@ -9,7 +9,7 @@ void kmerDecoder::next_chunk(){
     this->extractKmers();
 }
 
-flat_hash_map<std::string,std::vector<kmerRow>>* kmerDecoder::getKmers(){
+flat_hash_map<std::string,std::vector<kmer_row>>* kmerDecoder::getKmers(){
     return &this->kmers;
 }
 

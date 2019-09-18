@@ -1,6 +1,6 @@
 #include "kmerDecoder.hpp"
 
-void Kmers::seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers){
+void Kmers::seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers){
 
     kmers.clear();
 
@@ -8,7 +8,7 @@ void Kmers::seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers){
 
     for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++)
         {
-            kmerRow kmer;
+            kmer_row kmer;
             kmer.str = seq.substr(i, this->kSize);
             kmer.hash = this->hasher->hash(kmer.str);
             kmers.push_back(kmer);
@@ -32,7 +32,7 @@ void Kmers::extractKmers(){
 
         for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++)
         {
-            kmerRow kmer;
+            kmer_row kmer;
             kmer.str = seq.substr(i, this->kSize);
             kmer.hash = this->hasher->hash(kmer.str);
             this->kmers[id].push_back(kmer);

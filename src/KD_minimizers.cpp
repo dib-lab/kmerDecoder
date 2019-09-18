@@ -128,7 +128,7 @@ void Minimizers::extractKmers()
 
         for (auto z : v_set(ret))
         {
-            kmerRow kmer;
+            kmer_row kmer;
             kmer.str = z.seq;
             kmer.hash = this->hasher->hash(kmer.str);
             this->kmers[id].push_back(kmer);
@@ -138,7 +138,7 @@ void Minimizers::extractKmers()
 
 }
 
-void Minimizers::seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers){
+void Minimizers::seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers){
     kmers.clear();
     kmers.reserve(seq.size());
 
@@ -154,7 +154,7 @@ void Minimizers::seq_to_kmers(std::string & seq, std::vector <kmerRow> & kmers){
         }
 
     for (auto z : v_set(ret)){
-            kmerRow kmer;
+            kmer_row kmer;
             kmer.str = z.seq;
             kmer.hash = this->hasher->hash(kmer.str);
             kmers.push_back(kmer);
