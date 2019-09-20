@@ -30,3 +30,8 @@ bool kmerDecoder::end(){
 std::string kmerDecoder::get_filename(){
     return this->fileName;
 }
+
+
+kmerDecoder * kmerDecoder::initialize_hasher(int kmer_size, int hash_mode){
+    return new Kmers(kmer_size, hash_mode);
+}

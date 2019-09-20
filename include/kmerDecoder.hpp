@@ -69,6 +69,8 @@ public:
         return this->hasher->Ihash(kmer_hash);
     }
 
+    static kmerDecoder * initialize_hasher(int kmer_size, int hash_mode = 1);
+
 
     static Hasher * create_hasher(int kmer_size, int hash_mode = 1){
 
@@ -108,8 +110,11 @@ private:
 
 public:
 
-    explicit Kmers(int k_size) : kSize(k_size) {
+    explicit Kmers(int k_size, int hash_mode = 1) : kSize(k_size) {
         this->hasher = new IntegerHasher(kSize);
+        if (hash_mode != 1){
+            this->setHashingMode(hash_mode);
+        }
     };
 
     Kmers(const std::string & filename, unsigned int chunk_size, int kSize) {
@@ -325,4 +330,6 @@ public:
     }
 
     virtual ~Minimizers() {};
+
+    static kmerDecoder * initialize_hasher(int kmer_size, int hash_mode = 1);
 };
