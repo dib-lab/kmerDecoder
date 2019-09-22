@@ -90,7 +90,7 @@ public:
     string Ihash(uint64_t key);
 };
 
-// TwoBitsHasher
+// TwoBitsHasher Canonical
 
 class TwoBitsHasher: public Hasher{
 private:
@@ -102,6 +102,37 @@ public:
     uint64_t hash(uint64_t key);
     string Ihash(uint64_t key);
 };
+
+
+// TwoBitsHasher nonCanonical
+
+class noncanonical_TwoBitsHasher: public TwoBitsHasher{
+private:
+    uint64_t kSize;
+public:
+
+    noncanonical_TwoBitsHasher(uint64_t kSize): TwoBitsHasher(kSize){
+        this->kSize = kSize;
+    }
+
+    Hasher* clone() { return new noncanonical_TwoBitsHasher(kSize);}
+    uint64_t hash(string key);
+};
+
+
+class noncanonical_IntegerHasher : public IntegerHasher{
+private:
+    uint64_t kSize;
+    uint64_t mask;
+public:
+    noncanonical_IntegerHasher(uint64_t kSize) : IntegerHasher(kSize){
+        this->kSize=kSize;
+        this->mask=BITMASK(2*kSize);
+    }
+    Hasher* clone() { return new noncanonical_IntegerHasher(kSize);}
+    uint64_t hash(string key);
+};
+
 
 template<class hashFnType>
 class wrapperHasher: public Hasher{

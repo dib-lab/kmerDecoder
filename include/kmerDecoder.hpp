@@ -11,7 +11,7 @@
 using phmap::flat_hash_map;
 
 
-struct kmer_row{
+struct kmer_row {
     std::string str;
     uint64_t hash;
 };
@@ -31,10 +31,14 @@ protected:
     flat_hash_map<std::string, std::vector<kmer_row>> kmers;
     std::string fileName;
     seqan::SeqFileIn seqFileIn;
+
     void initialize_seqan();
+
     bool seqan_end = false;
+
     virtual void extractKmers() = 0;
-    Hasher * hasher;
+
+    Hasher *hasher;
 
     // Mode 0: Murmar Hashing | Irreversible
     // Mode 1: Integer Hashing | Reversible | Full Hashing
@@ -45,8 +49,9 @@ public:
 
     flat_hash_map<std::string, std::vector<kmer_row>> *getKmers();
 
-    
-    virtual void seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers) = 0;
+
+    virtual void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) = 0;
+
     virtual int get_kSize() = 0;
 
     bool end();
@@ -55,24 +60,23 @@ public:
 
     std::string get_filename();
 
-    virtual void setHashingMode(int hash_mode) = 0;
+    virtual void setHashingMode(int hash_mode, bool canonical = true) = 0;
 
     // hash single kmer
-    uint64_t hash_kmer(std::string kmer_str){
+    uint64_t hash_kmer(std::string kmer_str) {
         return this->hasher->hash(kmer_str);
     }
 
 
-
     // Inverse hash single kmer
-    std::string ihash_kmer(uint64_t & kmer_hash){
+    std::string ihash_kmer(uint64_t &kmer_hash) {
         return this->hasher->Ihash(kmer_hash);
     }
 
-    static kmerDecoder * initialize_hasher(int kmer_size, int hash_mode = 1);
+    static kmerDecoder *initialize_hasher(int kmer_size, int hash_mode = 1);
 
 
-    static Hasher * create_hasher(int kmer_size, int hash_mode = 1){
+    static Hasher *create_hasher(int kmer_size, int hash_mode = 1) {
 
         switch (hash_mode) {
             case 0:
@@ -85,8 +89,9 @@ public:
                 std::cerr << "Hashing mode : " << hash_mode << ", is not supported \n";
                 std::cerr << "Mode 0: Murmar Hashing | Irreversible\n"
                              "Mode 1: Integer Hashing | Reversible\n"
-                             "Mode 2: TwoBitsHashing | Not considered hashing, just store the two bits representation\n" <<
-                             "Default: Integer Hashing" << std::endl;
+                             "Mode 2: TwoBitsHashing | Not considered hashing, just store the two bits representation\n"
+                          <<
+                          "Default: Integer Hashing" << std::endl;
                 exit(1);
         }
 
@@ -106,18 +111,19 @@ class Kmers : public kmerDecoder {
 
 private:
     unsigned kSize{};
+
     void extractKmers();
 
 public:
 
     explicit Kmers(int k_size, int hash_mode = 1) : kSize(k_size) {
         this->hasher = new IntegerHasher(kSize);
-        if (hash_mode != 1){
+        if (hash_mode != 1) {
             this->setHashingMode(hash_mode);
         }
     };
 
-    Kmers(const std::string & filename, unsigned int chunk_size, int kSize) {
+    Kmers(const std::string &filename, unsigned int chunk_size, int kSize) {
         this->kSize = kSize;
         this->fileName = filename;
         this->chunk_size = chunk_size;
@@ -125,28 +131,28 @@ public:
         this->hasher = new IntegerHasher(kSize);
     }
 
-    void setHashingMode(int hash_mode){
-        switch (hash_mode) {
-            case 0:
-                hasher = (new MumurHasher(2038074761));
-                break;
-            case 1:
-                hasher = (new IntegerHasher(kSize));
-                break;
-            case 2:
+    void setHashingMode(int hash_mode, bool canonical = true) {
+        if (hash_mode == 0) hasher = (new MumurHasher(2038074761));
+        else if (hash_mode == 1) {
+            if (canonical) hasher = (new IntegerHasher(kSize));
+            else hasher = (new noncanonical_IntegerHasher(kSize));
+        } else if (hash_mode == 2) {
+            if (canonical) {
                 hasher = (new TwoBitsHasher(kSize));
-                break;
-            default:
-                hasher = (new IntegerHasher(kSize));
-                break;
+            } else {
+                hasher = (new noncanonical_TwoBitsHasher(kSize));
+            }
+        } else {
+            hasher = (new IntegerHasher(kSize));
         }
+
     }
 
 
-    void seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers);
+    void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers);
 
 
-    int get_kSize(){
+    int get_kSize() {
         return this->kSize;
     }
 };
@@ -162,11 +168,12 @@ class Skipmers : public kmerDecoder {
 private:
     int m, n, k;
     std::vector<int> ORFs = {0, 1, 2};
+
     void extractKmers();
 
 public:
 
-    Skipmers(uint8_t m, uint8_t n, uint8_t k, int ORF = 0){
+    Skipmers(uint8_t m, uint8_t n, uint8_t k, int ORF = 0) {
         if (n < 1 || n < m || k < m || k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape!"
                       << "Conditions: 0 < m <= n < k & k must be multiple of m" << std::endl;
@@ -185,7 +192,7 @@ public:
         this->hasher = new IntegerHasher(k);
     }
 
-    Skipmers(const std::string & filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k, int ORF = 0) {
+    Skipmers(const std::string &filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k, int ORF = 0) {
         if (n < 1 or n < m || k < m || k % m != 0) {
             std::cerr << "Error: invalid skip-mer shape!"
                       << "Conditions: 0 < m <= n < k & k must be multiple of m" << std::endl;
@@ -203,29 +210,29 @@ public:
         this->fileName = filename;
         this->chunk_size = chunk_size;
         this->initialize_seqan();
-        this->hasher = new IntegerHasher((int)k);
+        this->hasher = new IntegerHasher((int) k);
     }
 
-    void setHashingMode(int hash_mode){
-        switch (hash_mode) {
-            case 0:
-                hasher = (new MumurHasher(2038074761));
-                break;
-            case 1:
-                hasher = (new IntegerHasher(k));
-                break;
-            case 2:
+    void setHashingMode(int hash_mode, bool canonical = true) {
+        if (hash_mode == 0) hasher = (new MumurHasher(2038074761));
+        else if (hash_mode == 1) {
+            if (canonical) hasher = (new IntegerHasher(k));
+            else hasher = (new noncanonical_IntegerHasher(k));
+        } else if (hash_mode == 2) {
+            if (canonical) {
                 hasher = (new TwoBitsHasher(k));
-                break;
-            default:
-                hasher = (new IntegerHasher(k));
-                break;
+            } else {
+                hasher = (new noncanonical_TwoBitsHasher(k));
+            }
+        } else {
+            hasher = (new IntegerHasher(k));
         }
+
     }
 
-    void seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers);
+    void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers);
 
-    int get_kSize(){
+    int get_kSize() {
         return this->k;
     }
 
@@ -251,6 +258,7 @@ typedef struct mkmh_minimizer {
 class Minimizers : public kmerDecoder {
 private:
     int k, w;
+
     void extractKmers();
 
     struct mkmh_kmer_list_t {
@@ -289,7 +297,7 @@ protected:
     std::vector<T> v_set(std::vector<T> kmers);
 
 public:
-    Minimizers(const std::string & filename, unsigned int chunk_size, int k, int w) {
+    Minimizers(const std::string &filename, unsigned int chunk_size, int k, int w) {
         this->k = k;
         this->w = w;
         this->fileName = filename;
@@ -303,33 +311,32 @@ public:
         this->w = w;
     }
 
-    void setHashingMode(int hash_mode){
-        switch (hash_mode) {
-            case 0:
-                hasher = (new MumurHasher(2038074761));
-                break;
-            case 1:
-                hasher = (new IntegerHasher(k));
-                break;
-            case 2:
+    void setHashingMode(int hash_mode, bool canonical = true) {
+        if (hash_mode == 0) hasher = (new MumurHasher(2038074761));
+        else if (hash_mode == 1) {
+            if (canonical) hasher = (new IntegerHasher(k));
+            else hasher = (new noncanonical_IntegerHasher(k));
+        } else if (hash_mode == 2) {
+            if (canonical) {
                 hasher = (new TwoBitsHasher(k));
-                break;
-            default:
-                hasher = (new IntegerHasher(k));
-                break;
+            } else {
+                hasher = (new noncanonical_TwoBitsHasher(k));
+            }
+        } else {
+            hasher = (new IntegerHasher(k));
         }
     }
 
     std::vector<mkmh_minimizer> getMinimizers(std::string &seq);
 
 
-    void seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers);
+    void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers);
 
-    int get_kSize(){
+    int get_kSize() {
         return this->k;
     }
 
     virtual ~Minimizers() {};
 
-    static kmerDecoder * initialize_hasher(int kmer_size, int hash_mode = 1);
+    static kmerDecoder *initialize_hasher(int kmer_size, int hash_mode = 1);
 };

@@ -365,3 +365,25 @@ uint64_t TwoBitsHasher::hash(uint64_t key) {
 string TwoBitsHasher::Ihash(uint64_t key) {
     return kmer::int_to_str(key, this->kSize);
 }
+
+
+// _________ TwoBitsHasher
+
+
+uint64_t noncanonical_TwoBitsHasher::hash(string key) {
+    return kmer::str_to_int(key);
+}
+
+
+uint64_t noncanonical_IntegerHasher::hash(string kmer)
+{
+    uint64_t key=kmer::str_to_int(kmer);
+    key = (~key + (key << 21)) & mask; // key = (key << 21) - key - 1;
+    key = key ^ key >> 24;
+    key = ((key + (key << 3)) + (key << 8)) & mask; // key * 265
+    key = key ^ key >> 14;
+    key = ((key + (key << 2)) + (key << 4)) & mask; // key * 21
+    key = key ^ key >> 28;
+    key = (key + (key << 31)) & mask;
+    return key;
+}
