@@ -18,7 +18,7 @@
  * =====================================================================================
  */
 
-#include "HashUtils/hashutil.h"
+#include "HashUtils/hashutil.hpp"
 #include "Utils/kmer.h"
 #include <iostream>
 #include <unordered_map>

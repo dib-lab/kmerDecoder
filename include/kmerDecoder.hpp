@@ -6,7 +6,7 @@
 #include <seqan/seq_io.h>
 #include <parallel_hashmap/phmap.h>
 #include <stdint.h>
-#include "HashUtils/hashutil.h"
+#include "HashUtils/hashutil.hpp"
 
 using phmap::flat_hash_map;
 
@@ -69,7 +69,7 @@ public:
 
 
     // Inverse hash single kmer
-    std::string ihash_kmer(uint64_t &kmer_hash) {
+    std::string ihash_kmer(uint64_t kmer_hash) {
         return this->hasher->Ihash(kmer_hash);
     }
 
