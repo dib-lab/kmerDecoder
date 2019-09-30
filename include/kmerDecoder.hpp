@@ -38,7 +38,6 @@ protected:
 
     virtual void extractKmers() = 0;
 
-    Hasher *hasher;
 
     // Mode 0: Murmar Hashing | Irreversible
     // Mode 1: Integer Hashing | Reversible | Full Hashing
@@ -49,6 +48,10 @@ public:
 
     flat_hash_map<std::string, std::vector<kmer_row>> *getKmers();
 
+    Hasher * hasher;
+
+    int hash_mode = 0;
+    bool canonical = true;
 
     virtual void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) = 0;
 
@@ -118,6 +121,8 @@ public:
 
     explicit Kmers(int k_size, int hash_mode = 1) : kSize(k_size) {
         this->hasher = new IntegerHasher(kSize);
+        this->hash_mode = 1;
+        this->canonical = true;
         if (hash_mode != 1) {
             this->setHashingMode(hash_mode);
         }
@@ -129,9 +134,15 @@ public:
         this->chunk_size = chunk_size;
         this->initialize_seqan();
         this->hasher = new IntegerHasher(kSize);
+        this->hash_mode = 1;
+        this->canonical = true;
     }
 
     void setHashingMode(int hash_mode, bool canonical = true) {
+
+        this->hash_mode = hash_mode;
+        this->canonical = canonical;
+
         if (hash_mode == 0) hasher = (new MumurHasher(2038074761));
         else if (hash_mode == 1) {
             if (canonical) hasher = (new IntegerHasher(kSize));
@@ -190,6 +201,8 @@ public:
         this->n = n;
         this->k = k;
         this->hasher = new IntegerHasher(k);
+        this->hash_mode = 1;
+        this->canonical = true;
     }
 
     Skipmers(const std::string &filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k, int ORF = 0) {
@@ -211,9 +224,13 @@ public:
         this->chunk_size = chunk_size;
         this->initialize_seqan();
         this->hasher = new IntegerHasher((int) k);
+        this->hash_mode = 1;
+        this->canonical = true;
     }
 
     void setHashingMode(int hash_mode, bool canonical = true) {
+        this->hash_mode = hash_mode;
+        this->canonical = canonical;
         if (hash_mode == 0) hasher = (new MumurHasher(2038074761));
         else if (hash_mode == 1) {
             if (canonical) hasher = (new IntegerHasher(k));
@@ -304,14 +321,21 @@ public:
         this->chunk_size = chunk_size;
         this->initialize_seqan();
         this->hasher = new IntegerHasher(k);
+        this->hash_mode = 1;
+        this->canonical = true;
     }
 
     Minimizers(int k, int w) {
         this->k = k;
         this->w = w;
+        this->hasher = new IntegerHasher(k);
+        this->hash_mode = 1;
+        this->canonical = true;
     }
 
     void setHashingMode(int hash_mode, bool canonical = true) {
+        this->hash_mode = hash_mode;
+        this->canonical = canonical;
         if (hash_mode == 0) hasher = (new MumurHasher(2038074761));
         else if (hash_mode == 1) {
             if (canonical) hasher = (new IntegerHasher(k));
