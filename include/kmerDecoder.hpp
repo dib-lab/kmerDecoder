@@ -52,6 +52,7 @@ public:
 
     int hash_mode = 0;
     bool canonical = true;
+    std::string slicing_mode = "";
 
     virtual void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) = 0;
 
@@ -121,6 +122,7 @@ public:
 
     explicit Kmers(int k_size, int hash_mode = 1) : kSize(k_size) {
         this->hasher = new IntegerHasher(kSize);
+        this->slicing_mode = "kmers";
         this->hash_mode = 1;
         this->canonical = true;
         if (hash_mode != 1) {
@@ -136,6 +138,7 @@ public:
         this->hasher = new IntegerHasher(kSize);
         this->hash_mode = 1;
         this->canonical = true;
+        this->slicing_mode = "kmers";
     }
 
     void setHashingMode(int hash_mode, bool canonical = true) {
@@ -203,6 +206,7 @@ public:
         this->hasher = new IntegerHasher(k);
         this->hash_mode = 1;
         this->canonical = true;
+        this->slicing_mode = "skipmers";
     }
 
     Skipmers(const std::string &filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k, int ORF = 0) {
@@ -226,6 +230,7 @@ public:
         this->hasher = new IntegerHasher((int) k);
         this->hash_mode = 1;
         this->canonical = true;
+        this->slicing_mode = "skipmers";
     }
 
     void setHashingMode(int hash_mode, bool canonical = true) {
@@ -323,6 +328,7 @@ public:
         this->hasher = new IntegerHasher(k);
         this->hash_mode = 1;
         this->canonical = true;
+        this->slicing_mode = "minimizers";
     }
 
     Minimizers(int k, int w) {
@@ -331,6 +337,7 @@ public:
         this->hasher = new IntegerHasher(k);
         this->hash_mode = 1;
         this->canonical = true;
+        this->slicing_mode = "minimizers";
     }
 
     void setHashingMode(int hash_mode, bool canonical = true) {
