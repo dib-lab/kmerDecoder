@@ -7,7 +7,11 @@ project (kmerDecoder C CXX)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
+option(BUILD_BIN "Build Binaries" OFF)
 
+if(BUILD_BIN)
+  add_definitions(-BUILD_BIN=1)
+endif()
 
 # ----------------------------------------------------------------------------
 # Seqan Setup
@@ -57,3 +61,8 @@ include_directories(${PHMAP_INCLUDE_DIRS})
 add_library(kmerDecoder STATIC ${SOURCES})
 target_include_directories(kmerDecoder INTERFACE ${PHMAP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/lib/seqan/include ${KMERDECODER_INCLUDE_DIRS})
 target_link_libraries(kmerDecoder z)
+
+if (BUILD_BIN)
+        message("Building kmerDecoder binaries")
+        add_subdirectory(bin)
+endif()
