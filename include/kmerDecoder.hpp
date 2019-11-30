@@ -101,6 +101,12 @@ public:
 
     }
 
+    virtual ~kmerDecoder(){
+        delete this->hasher;
+        seqan::close(this->seqFileIn);
+        this->kmers.clear();
+    }
+
 };
 
 
@@ -169,6 +175,9 @@ public:
     int get_kSize() {
         return this->kSize;
     }
+
+    ~Kmers(){}
+    
 };
 
 
@@ -258,7 +267,7 @@ public:
         return this->k;
     }
 
-    virtual ~Skipmers() {}
+    ~Skipmers(){}
 };
 
 
@@ -367,7 +376,8 @@ public:
         return this->k;
     }
 
-    virtual ~Minimizers() {};
-
     static kmerDecoder *initialize_hasher(int kmer_size, int hash_mode = 1);
+
+    ~Minimizers(){}
+
 };
