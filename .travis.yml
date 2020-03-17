@@ -29,10 +29,8 @@ before_install:
 install:
   - echo "******** Building Binaries ********"
   - mkdir build && cd build
-  - cmake -DBUILD_BIN=1 ..
+  - cmake .. # -DBUILD_BIN=1 ..
   - make
-  - cd bin
-  - ./test_kmerDecoder
 
 branches:
   only:
