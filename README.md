@@ -1,6 +1,6 @@
 # kmerDecoder
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/675f273c446f45bebb5b8e354e24bccb)](https://app.codacy.com/app/mr-eyes/kmerDecoder?utm_source=github.com&utm_medium=referral&utm_content=mr-eyes/kmerDecoder&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3cdd9ae64c67470cbaaeb3b371286f33)](https://www.codacy.com/manual/mr-eyes/kmerDecoder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dib-lab/kmerDecoder&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/dib-lab/kmerDecoder.svg?branch=master)](https://travis-ci.org/dib-lab/kmerDecoder)
 
 ## Quick Setup (using CMake)
