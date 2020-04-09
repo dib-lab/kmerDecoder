@@ -27,12 +27,9 @@ before_install:
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 70 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
 install:
-  - echo "******** Building Binaries ********"
   - mkdir build && cd build
-  - cmake -DBUILD_BIN=1 ..
+  - cmake .. # -DBUILD_BIN=1 ..
   - make
-  - cd bin
-  - ./test_kmerDecoder
 
 branches:
   only:
