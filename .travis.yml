@@ -12,7 +12,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - george-edison55-precise-backports]
+            - george-edison55-precise-backports
           packages:
             - g++-7
             - zlib1g-dev
