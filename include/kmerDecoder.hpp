@@ -5,7 +5,7 @@
 #include <list>
 #include <seqan/seq_io.h>
 #include <parallel_hashmap/phmap.h>
-#include <stdint.h>
+#include <cstdint>
 #include "HashUtils/hashutil.hpp"
 
 using phmap::flat_hash_map;
@@ -67,7 +67,7 @@ public:
     virtual void setHashingMode(int hash_mode, bool canonical = true) = 0;
 
     // hash single kmer
-    uint64_t hash_kmer(std::string kmer_str) {
+    uint64_t hash_kmer(const std::string & kmer_str) {
         return this->hasher->hash(kmer_str);
     }
 
@@ -89,11 +89,14 @@ public:
                 return (new IntegerHasher(kmer_size));
             case 2:
                 return (new TwoBitsHasher(kmer_size));
+            case 3:
+                return(new bigKmerHasher(kmer_size)); // kmer size here is useless
             default:
                 std::cerr << "Hashing mode : " << hash_mode << ", is not supported \n";
                 std::cerr << "Mode 0: Murmar Hashing | Irreversible\n"
                              "Mode 1: Integer Hashing | Reversible\n"
                              "Mode 2: TwoBitsHashing | Not considered hashing, just store the two bits representation\n"
+                             "Mode 3: bigKmerHasher | Irreversible hashing using std::hash<T> (Supported only for Kmers mode)\n"
                           <<
                           "Default: Integer Hashing" << std::endl;
                 exit(1);
@@ -149,6 +152,8 @@ public:
 
     void setHashingMode(int hash_mode, bool canonical = true) {
 
+        // bool canonical is used only in IntegerHasher and TwoBitsHasher
+
         this->hash_mode = hash_mode;
         this->canonical = canonical;
 
@@ -162,7 +167,9 @@ public:
             } else {
                 hasher = (new noncanonical_TwoBitsHasher(kSize));
             }
-        } else {
+        } else if (hash_mode == 3){
+            hasher = (new bigKmerHasher(kSize));
+        }else {
             hasher = (new IntegerHasher(kSize));
         }
 
