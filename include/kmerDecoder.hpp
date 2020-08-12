@@ -3,10 +3,14 @@
 #include <vector>
 #include <set>
 #include <list>
-#include <seqan/seq_io.h>
 #include <parallel_hashmap/phmap.h>
 #include <cstdint>
 #include "HashUtils/hashutil.hpp"
+#include <zlib.h>
+#include <cstdio>
+#include "kseq.h"
+
+KSEQ_INIT(gzFile, gzread)
 
 using phmap::flat_hash_map;
 
@@ -26,15 +30,16 @@ class kmerDecoder {
 
 protected:
     unsigned int chunk_size;
-    seqan::StringSet<seqan::CharString> ids;
-    seqan::StringSet<seqan::CharString> seqs;
+
     flat_hash_map<std::string, std::vector<kmer_row>> kmers;
     std::string fileName;
-    seqan::SeqFileIn seqFileIn;
+    gzFile fp;
+    kseq_t *kseqObj;
 
-    void initialize_seqan();
 
-    bool seqan_end = false;
+    void initialize_kSeq();
+
+    bool FILE_END = false;
 
     virtual void extractKmers() = 0;
 
@@ -106,7 +111,8 @@ public:
 
     virtual ~kmerDecoder(){
         delete this->hasher;
-        seqan::close(this->seqFileIn);
+        kseq_destroy(this->kseqObj);
+        gzclose(this->fp);
         this->kmers.clear();
     }
 
@@ -143,7 +149,7 @@ public:
         this->kSize = kSize;
         this->fileName = filename;
         this->chunk_size = chunk_size;
-        this->initialize_seqan();
+        this->initialize_kSeq();
         this->hasher = new IntegerHasher(kSize);
         this->hash_mode = 1;
         this->canonical = true;
@@ -242,7 +248,7 @@ public:
         this->k = k;
         this->fileName = filename;
         this->chunk_size = chunk_size;
-        this->initialize_seqan();
+        this->initialize_kSeq();
         this->hasher = new IntegerHasher((int) k);
         this->hash_mode = 1;
         this->canonical = true;
@@ -340,7 +346,7 @@ public:
         this->w = w;
         this->fileName = filename;
         this->chunk_size = chunk_size;
-        this->initialize_seqan();
+        this->initialize_kSeq();
         this->hasher = new IntegerHasher(k);
         this->hash_mode = 1;
         this->canonical = true;

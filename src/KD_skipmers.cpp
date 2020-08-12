@@ -27,13 +27,12 @@ void Skipmers::seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers){
 void Skipmers::extractKmers()
 {
     std::string ORF_SEQ = "";
-    std::string id;
-    std::string seq;
 
-    for(unsigned long seq_num =0; seq_num < seqan::length(this->ids); seq_num++){
 
-        id = std::string((char*)seqan::toCString(this->ids[seq_num]));
-        seq = std::string((char*)seqan::toCString(this->seqs[seq_num]));
+    for (int seqCounter = 0; seqCounter < this->chunk_size && ((kseq_read(this->kseqObj)) >= 0); seqCounter++) {
+
+        std::string seq = kseqObj->seq.s;
+        std::string id = kseqObj->name.s;
         
         this->kmers[id].reserve(seq.size());
 
@@ -52,6 +51,10 @@ void Skipmers::extractKmers()
 
             ORF_SEQ.clear();
         }
+    }
+
+    if ((unsigned int) this->kmers.size() != this->chunk_size) {
+        this->FILE_END = true;
     }
 
 }
