@@ -110,10 +110,11 @@ void Minimizers::extractKmers()
     std::string id;
     std::string seq;
 
-    for(unsigned long seq_num =0; seq_num < seqan::length(this->ids); seq_num++) {
+    for (int seqCounter = 0; seqCounter < this->chunk_size && ((kseq_read(this->kseqObj)) >= 0); seqCounter++) {
 
-        id = std::string((char *) seqan::toCString(this->ids[seq_num]));
-        seq = std::string((char *) seqan::toCString(this->seqs[seq_num]));
+        std::string seq = kseqObj->seq.s;
+        std::string id = kseqObj->name.s;
+
         this->kmers[id].reserve(seq.size());
 
         kmert = kmer_tuples(seq, this->k);
@@ -134,6 +135,10 @@ void Minimizers::extractKmers()
             this->kmers[id].push_back(kmer);
         }
 
+    }
+
+    if ((unsigned int) this->kmers.size() != this->chunk_size) {
+        this->FILE_END = true;
     }
 
 }

@@ -1,37 +1,34 @@
 #include "kmerDecoder.hpp"
 
-void Kmers::seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers){
+void Kmers::seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) {
 
     kmers.clear();
 
     kmers.reserve(seq.size());
 
-    for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++)
-        {
-            kmer_row kmer;
-            kmer.str = seq.substr(i, this->kSize);
-            kmer.hash = this->hasher->hash(kmer.str);
-            kmers.push_back(kmer);
-        }
+    for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++) {
+        kmer_row kmer;
+        kmer.str = seq.substr(i, this->kSize);
+        kmer.hash = this->hasher->hash(kmer.str);
+        kmers.push_back(kmer);
+    }
 
 }
 
-void Kmers::extractKmers(){
+void Kmers::extractKmers() {
 
-    std::string id;
-    std::string seq;
+    for (int seqCounter = 0; seqCounter < this->chunk_size && ((kseq_read(this->kseqObj)) >= 0); seqCounter++) {
 
-    for(unsigned seq_num = 0; seq_num < seqan::length(this->ids); seq_num++){
+        uint32_t seq_length = string(this->kseqObj->seq.s).size();
 
-        if(seqan::length(this->seqs[seq_num]) < this->kSize) continue; 
+        if (seq_length < this->kSize) continue;
 
-        seq = std::string((char*)seqan::toCString(this->seqs[seq_num]));
-        id =  std::string((char*)seqan::toCString(this->ids[seq_num]));
+        std::string seq = kseqObj->seq.s;
+        std::string id = kseqObj->name.s;
 
         this->kmers[id].reserve(seq.size());
 
-        for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++)
-        {
+        for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++) {
             kmer_row kmer;
             kmer.str = seq.substr(i, this->kSize);
             kmer.hash = this->hasher->hash(kmer.str);
@@ -40,5 +37,9 @@ void Kmers::extractKmers(){
 
     }
 
+    if ((unsigned int) this->kmers.size() != this->chunk_size) {
+        this->FILE_END = true;
+    }
 
 }
+
