@@ -15,7 +15,7 @@ void kmerDecoder::initialize_kSeq(){
     kseqObj = kseq_init(fp);
 }
 
-bool kmerDecoder::end(){
+bool kmerDecoder::end() const{
     return this->FILE_END;
 }
 

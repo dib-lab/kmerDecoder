@@ -29,12 +29,12 @@ struct kmer_row {
 class kmerDecoder {
 
 protected:
-    unsigned int chunk_size;
+    unsigned int chunk_size{};
 
     flat_hash_map<std::string, std::vector<kmer_row>> kmers;
     std::string fileName;
-    gzFile fp;
-    kseq_t *kseqObj;
+    gzFile fp{};
+    kseq_t *kseqObj{};
 
 
     void initialize_kSeq();
@@ -53,23 +53,23 @@ public:
 
     flat_hash_map<std::string, std::vector<kmer_row>> *getKmers();
 
-    Hasher * hasher;
+    Hasher * hasher{};
 
     int hash_mode = 0;
     bool canonical = true;
-    std::string slicing_mode = "";
+    std::string slicing_mode;
 
     virtual void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) = 0;
 
     virtual int get_kSize() = 0;
 
-    bool end();
+    bool end() const;
 
     void next_chunk();
 
     std::string get_filename();
 
-    virtual void setHashingMode(int hash_mode, bool canonical = true) = 0;
+    virtual void setHashingMode(int hash_mode, bool canonical) = 0;
 
     // hash single kmer
     uint64_t hash_kmer(const std::string & kmer_str) {
@@ -131,7 +131,7 @@ class Kmers : public kmerDecoder {
 private:
     unsigned kSize{};
 
-    void extractKmers();
+    void extractKmers() override;
 
 public:
 
@@ -141,7 +141,7 @@ public:
         this->hash_mode = 1;
         this->canonical = true;
         if (hash_mode != 1) {
-            this->setHashingMode(hash_mode);
+            Kmers::setHashingMode(hash_mode);
         }
     };
 
@@ -182,14 +182,14 @@ public:
     }
 
 
-    void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers);
+    void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) override;
 
 
     int get_kSize() {
         return this->kSize;
     }
 
-    ~Kmers(){}
+    ~Kmers() override{}
     
 };
 
