@@ -190,7 +190,7 @@ public:
     }
 
     ~Kmers() override{}
-    
+
 };
 
 
@@ -202,7 +202,7 @@ public:
 
 class Skipmers : public kmerDecoder {
 private:
-    int m, n, k;
+    int m, n, k, S;
     std::vector<int> ORFs = {0, 1, 2};
 
     void extractKmers();
@@ -225,6 +225,8 @@ public:
         this->m = m;
         this->n = n;
         this->k = k;
+        this->S = k;
+        this->S = S + ((S - 1) / this->m) * (this->n - this->m);
         this->hasher = new IntegerHasher(k);
         this->hash_mode = 1;
         this->canonical = true;
@@ -246,6 +248,8 @@ public:
         this->m = m;
         this->n = n;
         this->k = k;
+        this->S = k;
+        this->S = S + ((S - 1) / this->m) * (this->n - this->m);
         this->fileName = filename;
         this->chunk_size = chunk_size;
         this->initialize_kSeq();
