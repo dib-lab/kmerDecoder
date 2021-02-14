@@ -17,11 +17,13 @@ void Kmers::seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) {
 
 void Kmers::extractKmers() {
 
+    bool SHORT_SEQ = false;
+
     for (int seqCounter = 0; seqCounter < Kmers::chunk_size && ((kseq_read(this->kseqObj)) >= 0); seqCounter++) {
 
         uint32_t seq_length = string(this->kseqObj->seq.s).size();
 
-        if (seq_length < this->kSize) continue;
+        if (seq_length < this->kSize) { SHORT_SEQ = true; continue; }
 
         std::string seq = kseqObj->seq.s;
         std::string id = kseqObj->name.s;
@@ -37,7 +39,7 @@ void Kmers::extractKmers() {
 
     }
 
-    if ((unsigned int) this->kmers.size() != this->chunk_size) {
+    if ((unsigned int) this->kmers.size() != this->chunk_size && !SHORT_SEQ) {
         this->FILE_END = true;
     }
 
