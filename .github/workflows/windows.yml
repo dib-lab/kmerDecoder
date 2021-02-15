@@ -18,7 +18,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
+        with:
+          submodules: recursive
+          
       - uses: actions/cache@v2
         with:
           path: "**/cpm_modules"
