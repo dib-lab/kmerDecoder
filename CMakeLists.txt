@@ -98,5 +98,5 @@ packageProject(
         INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
         INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
         VERSION_HEADER "${VERSION_HEADER_LOCATION}"
-        DEPENDENCIES "boost"
+        DEPENDENCIES ""
 )
