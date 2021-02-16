@@ -116,7 +116,7 @@ private:
     uint64_t mask;
     uint64_t kSize;
 public:
-    IntegerHasher(uint64_t kSize);
+    explicit IntegerHasher(uint64_t kSize);
 
     Hasher *clone() override { return new IntegerHasher(kSize); }
 
@@ -217,16 +217,16 @@ private:
 public:
     explicit QHasher(uint64_t kSize);
 
-    QHasher(uint64_t kSize, int _Q);
+    QHasher(uint64_t kSize, int Q);
 
     Hasher *clone() override { return new QHasher(kSize, Q); }
 
     // To set the Q if not initialized
-    void set_Q(int _Q);
+    void set_Q(int Q);
 
-    uint64_t merge_Q_R(uint64_t &_Q, uint64_t &R);
+    uint64_t merge_Q_R(uint64_t &Q, uint64_t &R);
 
-    void split_Q_R(uint64_t key, uint64_t &_Q, uint64_t &R);
+    void split_Q_R(uint64_t key, uint64_t &Q, uint64_t &R);
 
     uint64_t normal_hash(const string &key);
 
@@ -255,7 +255,7 @@ public:
         return new wrapperHasher(fn, kSize);
     }
 
-    uint64_t hash(const string &key) {
+    uint64_t hash(const string &key) override {
         return fn(kmer::str_to_canonical_int(key));
     }
 
