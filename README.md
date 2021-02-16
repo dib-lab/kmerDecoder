@@ -1,27 +1,30 @@
 # kmerDecoder
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3cdd9ae64c67470cbaaeb3b371286f33)](https://www.codacy.com/manual/mr-eyes/kmerDecoder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dib-lab/kmerDecoder&amp;utm_campaign=Badge_Grade)
-[![Build Status](https://travis-ci.org/dib-lab/kmerDecoder.svg?branch=master)](https://travis-ci.org/dib-lab/kmerDecoder)
+[![Ubuntu](https://github.com/dib-lab/kmerDecoder/workflows/Ubuntu/badge.svg)](https://github.com/dib-lab/kmerDecoder/actions?query=workflow%3AUbuntu)
+[![Install](https://github.com/dib-lab/kmerDecoder/workflows/Install/badge.svg)](https://github.com/dib-lab/kmerDecoder/actions?query=workflow%3AInstall)
+
 
 ## Quick Setup (using CMake)
 
 Create `CMakeLists.txt` file in your project directory
 
 ```cmake
-cmake_minimum_required (VERSION 3.4)
+cmake_minimum_required (VERSION 3.14)
 project (KD_Test C CXX)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fopenmp")
 
 add_subdirectory(kmerDecoder)
 
-add_executable (kdtest ${CPP_SOURCE_FILE})
+file(GLOB SOURCES
+        "${PROJECT_SOURCE_DIR}/src/main.cpp"
+        )
 
+add_executable (kdtest ${SOURCES})
 target_link_libraries(kdtest kmerDecoder)
-
 ```
 
-Use the generated static lib either using Cmake `add_subdirectory()` or by linking to compilation command.
+> Using kmerDecoder with cmake `add_subdirectory()` is recommended. 
 
 ## Usage Example
 
@@ -32,26 +35,27 @@ create `sample.fa`
 ACGTAGCATGCATGACGATGCTAGCGT
 ```
 
+`src/main.cpp`
 ```cpp
 #include "kmerDecoder.hpp"
 
 void extract(kmerDecoder *KD);
 
 int main() {
-  std::string filename = "sample.fa";
+  std::string filename = "path_to/sample.fa";
   unsigned int chunk_size = 1;
 
   /*
   Create three kmerDecoder objects
   */
 
-  // 1- Kmers Mode > Kmers(seqan_object, chunk_size, kSize)
+  // 1- Kmers Mode > Kmers(filename, chunk_size, kSize)
   kmerDecoder *KMERS = new Kmers(filename, chunk_size, 15);
 
-  // 2- Skipmers Mode > Skipmers(seqan_object, chunk_size, m, n, k)
+  // 2- Skipmers Mode > Skipmers(filename, chunk_size, m, n, k)
   kmerDecoder *SKIPMERS = new Skipmers(filename, chunk_size, 2, 3, 10);
 
-  // 3- Minimizers Mode > Minimizers(seqan_object, chunk_size, k, w)
+  // 3- Minimizers Mode > Minimizers(filename, chunk_size, k, w)
   kmerDecoder *MINIMIZERS = new Minimizers(filename, chunk_size, 5, 10);
 
   // Start Extraction
