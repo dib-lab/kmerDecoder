@@ -51,20 +51,30 @@ file(GLOB SOURCES
         "${PROJECT_SOURCE_DIR}/src/KD_skipmers.cpp"
         "${PROJECT_SOURCE_DIR}/src/KD_minimizers.cpp"
         "${PROJECT_SOURCE_DIR}/src/HashUtils/hashutil.cpp"
+        "${PROJECT_SOURCE_DIR}/src/HashUtils/aaHasher.cpp"
         "${PROJECT_SOURCE_DIR}/src/Utils/kmer.cpp"
         )
 
+# TO DO delete when no need
+# file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*h" "${CMAKE_CURRENT_SOURCE_DIR}/include/*hpp")
+# file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+
+
 set(PHMAP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib/parallel-hashmap")
+set(DOCTEST_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib/doctest/")
 set(KMERDECODER_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(KSEQ_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib/kseq")
 
-include_directories("${PROJECT_SOURCE_DIR}/include")
+# include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories(${PHMAP_INCLUDE_DIRS})
+# include_directories(${DOCTEST_INCLUDE_DIRS})
 include_directories(${KSEQ_INCLUDE_DIRS})
 
 # ---- Create library ----
 
 add_library(kmerDecoder ${SOURCES} ${KMERDECODER_INCLUDE_DIRS} ${KSEQ_INCLUDE_DIRS} ${PHMAP_INCLUDE_DIRS})
+
+set_target_properties(kmerDecoder PROPERTIES CXX_STANDARD 17)
 
 target_include_directories(
         kmerDecoder PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
