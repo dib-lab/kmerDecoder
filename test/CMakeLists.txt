@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
-project(GreeterTests LANGUAGES CXX)
+project(kmerDecoderTests LANGUAGES CXX)
 
 # ---- Options ----
 
@@ -17,8 +17,7 @@ include(../cmake/CPM.cmake)
 
 CPMAddPackage(
         NAME doctest
-        GITHUB_REPOSITORY onqtam/doctest
-        GIT_TAG 2.4.5
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/../lib/doctest
 )
 
 if(TEST_INSTALLED_VERSION)
@@ -53,12 +52,7 @@ if(NOT TEST_INSTALLED_VERSION)
     endif()
 endif()
 
-# ---- Add GreeterTests ----
-
 enable_testing()
-
-# Note: doctest and similar testing frameworks can automatically configure CMake tests For other
-# testing frameworks add the tests target instead: ADD_TEST(GreeterTests GreeterTests)
 
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 doctest_discover_tests(kmerDecoderTests)
