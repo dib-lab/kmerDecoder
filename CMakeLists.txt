@@ -45,6 +45,9 @@ endif ()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC -fopenmp -pedantic -O3 -oFast")
 
+
+# ---- Create library ----
+
 file(GLOB SOURCES
         "${PROJECT_SOURCE_DIR}/src/kmerDecoder.cpp"
         "${PROJECT_SOURCE_DIR}/src/KD_kmers.cpp"
@@ -56,25 +59,16 @@ file(GLOB SOURCES
         "${PROJECT_SOURCE_DIR}/src/Utils/kmer.cpp"
         )
 
-
-set(PHMAP_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib/parallel-hashmap")
-set(DOCTEST_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib/doctest/")
-set(KMERDECODER_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
-set(KSEQ_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/lib/kseq")
-
-# include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories(${PHMAP_INCLUDE_DIRS})
-# include_directories(${DOCTEST_INCLUDE_DIRS})
-include_directories(${KSEQ_INCLUDE_DIRS})
-
-# ---- Create library ----
-
-add_library(kmerDecoder ${SOURCES} ${KMERDECODER_INCLUDE_DIRS} ${KSEQ_INCLUDE_DIRS} ${PHMAP_INCLUDE_DIRS})
+add_library(kmerDecoder ${SOURCES})
 
 set_target_properties(kmerDecoder PROPERTIES CXX_STANDARD 17)
 
+set(PHMAP_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/lib/parallel-hashmap")
+set(KMERDECODER_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
+set(KSEQ_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/lib/kseq")
+
 target_include_directories(
-        kmerDecoder PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        kmerDecoder PUBLIC $<BUILD_INTERFACE:${KMERDECODER_INCLUDE_DIRS}$<SEMICOLON>${PHMAP_INCLUDE_DIRS}$<SEMICOLON>${KSEQ_INCLUDE_DIRS}>
         $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
 )
 
