@@ -5,7 +5,7 @@
 #ifndef KMERDECODER_AAHASHER_HPP
 #define KMERDECODER_AAHASHER_HPP
 
-#include "hashutil.hpp"
+#include "HashUtils/hashutil.hpp"
 #include <unordered_map>
 
 
