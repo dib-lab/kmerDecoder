@@ -50,6 +50,7 @@ file(GLOB SOURCES
         "${PROJECT_SOURCE_DIR}/src/KD_kmers.cpp"
         "${PROJECT_SOURCE_DIR}/src/KD_skipmers.cpp"
         "${PROJECT_SOURCE_DIR}/src/KD_minimizers.cpp"
+        "${PROJECT_SOURCE_DIR}/src/KD_aaKmers.cpp"
         "${PROJECT_SOURCE_DIR}/src/HashUtils/hashutil.cpp"
         "${PROJECT_SOURCE_DIR}/src/HashUtils/aaHasher.cpp"
         "${PROJECT_SOURCE_DIR}/src/Utils/kmer.cpp"
