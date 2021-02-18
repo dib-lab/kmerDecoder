@@ -26,7 +26,10 @@ void aaKmers::extractKmers() {
         if (seq_length < this->kSize) { SHORT_SEQ = true; continue; }
 
         std::string seq = kseqObj->seq.s;
-        std::string id = kseqObj->name.s;
+        std::string id;
+        id.append(kseqObj->name.s);
+        id.append(" ");
+        id.append(kseqObj->comment.s);
 
         this->kmers[id].reserve(seq.size());
 
