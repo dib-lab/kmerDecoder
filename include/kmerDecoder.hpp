@@ -447,6 +447,11 @@ public:
 
     void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) override;
 
+
+     void setHashingMode(int hash_mode, bool canonical = true) {
+        
+    }
+
     int get_kSize() {
         return this->kSize;
     }
