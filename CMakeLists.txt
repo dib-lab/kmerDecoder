@@ -48,6 +48,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC -fopenmp -pedantic -O3 
 
 # ---- Create library ----
 
+CPMAddPackage(
+        NAME phmap
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}/lib/parallel-hashmap
+)
+
+CPMAddPackage(
+        NAME kseq
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}/lib/kseq
+)
+
+
 file(GLOB SOURCES
         "${PROJECT_SOURCE_DIR}/src/kmerDecoder.cpp"
         "${PROJECT_SOURCE_DIR}/src/KD_kmers.cpp"
@@ -67,8 +78,11 @@ set(PHMAP_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/lib/parallel-hashmap")
 set(KMERDECODER_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 set(KSEQ_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/lib/kseq")
 
+# include(${CMAKE_SOURCE_DIR}/lib/parallel-hashmap/cmake/phmap.cmake)
+
 target_include_directories(
-        kmerDecoder PUBLIC $<BUILD_INTERFACE:${KMERDECODER_INCLUDE_DIRS}$<SEMICOLON>${PHMAP_INCLUDE_DIRS}$<SEMICOLON>${KSEQ_INCLUDE_DIRS}>
+        kmerDecoder PUBLIC $<BUILD_INTERFACE:${KMERDECODER_INCLUDE_DIRS}$<SEMICOLON>${kseq_SOURCE_DIR}$<SEMICOLON>${phmap_SOURCE_DIR}>
+        # kmerDecoder PUBLIC $<BUILD_INTERFACE:${KMERDECODER_INCLUDE_DIRS}$<SEMICOLON>${PHMAP_INCLUDE_DIRS}$<SEMICOLON>${KSEQ_INCLUDE_DIRS}>
         $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
 )
 
