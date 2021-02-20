@@ -1,8 +1,10 @@
 # kmerDecoder
 
 [![Ubuntu](https://github.com/dib-lab/kmerDecoder/workflows/Ubuntu/badge.svg)](https://github.com/dib-lab/kmerDecoder/actions?query=workflow%3AUbuntu)
-[![Install](https://github.com/dib-lab/kmerDecoder/workflows/Install/badge.svg)](https://github.com/dib-lab/kmerDecoder/actions?query=workflow%3AInstall)
 
+<!-- DEFERRED 
+[![Install](https://github.com/dib-lab/kmerDecoder/workflows/Install/badge.svg)](https://github.com/dib-lab/kmerDecoder/actions?query=workflow%3AInstall)
+-->
 
 ## Quick Setup (using CMake)
 
