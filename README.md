@@ -35,6 +35,13 @@ create `sample.fa`
 ACGTAGCATGCATGACGATGCTAGCGT
 ```
 
+create `aa_sample.fa`
+
+```fasta
+>SAMPLE
+KLGCKGAMLMKMKHACGKGLALMLLMMHAL
+```
+
 `src/main.cpp`
 ```cpp
 #include "kmerDecoder.hpp"
@@ -58,6 +65,9 @@ int main() {
   // 3- Minimizers Mode > Minimizers(filename, chunk_size, k, w)
   kmerDecoder *MINIMIZERS = new Minimizers(filename, chunk_size, 5, 10);
 
+  // 4- Protein kmers Mode > aaKmers(filename, chunk_size, k) | Max kSize = 11
+  kmerDecoder *PROT_KMERS = new aaKmers(prot_filename, _chunk_size, 11);
+
   // Start Extraction
 
   std::cout << "Mode: Kmers" << "\n";
@@ -70,6 +80,10 @@ int main() {
 
   std::cout << "Mode: Minimizers" << "\n";
   extract(MINIMIZERS);
+  std::cout << "------------------------------------" << std::endl;
+
+  std::cout << "Mode: Protein Kmers" << "\n";
+  extract(PROT_KMERS);
   std::cout << "------------------------------------" << std::endl;
 }
 
