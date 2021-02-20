@@ -33,7 +33,10 @@ void Skipmers::extractKmers()
     for (int seqCounter = 0; seqCounter < this->chunk_size && ((kseq_read(this->kseqObj)) >= 0); seqCounter++) {
 
         std::string seq = kseqObj->seq.s;
-        std::string id = kseqObj->name.s;
+        std::string id;
+        id.append(kseqObj->name.s);
+        id.append(" ");
+        id.append(kseqObj->comment.s);
 
         if(seq.size() < this->S){
             SHORT_SEQ = true;

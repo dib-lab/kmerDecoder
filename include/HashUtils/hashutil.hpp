@@ -10,10 +10,12 @@
 *       Revision:  none
 *       Compiler:  gcc
 *
+*
 *         Author:  Prashant Pandey (ppandey@cs.stonybrook.edu)
 *                  Rob Patro (rob.patro@cs.stonybrook.edu)
 *                  Rob Johnson (rob@cs.stonybrook.edu)
 *   Organization:  Stony Brook University
+*   Edited by: Mohamed Abuelanin (mabuelanin@gmail.com) UC Davis
 *
 * =====================================================================================
 */
@@ -23,7 +25,7 @@
 
 #include <sys/types.h>
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 #include <cstdint>
 #include <stdexcept>
 #include <unordered_map>
@@ -34,6 +36,10 @@ using namespace boost::assign;
 
 
 using namespace std;
+
+/* ---------------------
+Class Hasher: Parent class
+--------------------- */
 
 class Hasher {
 public:
@@ -48,6 +54,13 @@ public:
     virtual Hasher *clone() { return this; };
 };
 
+
+/* ---------------------
+ Class bigKmerHasher: inherits from class:Hasher
+ Hashing direction: Irreversible
+ Description:
+    Used in hashing large kmers with kSize > 32. It uses std::hash.
+--------------------- */
 
 class bigKmerHasher : public Hasher {
 private:
@@ -72,6 +85,13 @@ public:
     }
 };
 
+/* ---------------------
+ Class MumurHasher: inherits from class:Hasher
+ Hashing direction: Irreversible
+ Description:
+    Used in hashing kmers with kSize <= 32. Supports non-ACGT kmers.
+--------------------- */
+
 class MumurHasher : public Hasher {
     using Hasher::hash;
 private:
@@ -84,12 +104,19 @@ public:
     uint64_t hash(string kmer);
 };
 
+/* ---------------------
+ Class IntegerHasher: inherits from class:Hasher
+ Hashing direction: Reversible
+ Description:
+    Used in hashing kmers with kSize <= 32.
+--------------------- */
+
 class IntegerHasher : public Hasher {
 private:
     uint64_t mask;
     uint64_t kSize;
 public:
-    IntegerHasher(uint64_t kSize);
+    explicit IntegerHasher(uint64_t kSize);
 
     Hasher *clone() override { return new IntegerHasher(kSize); }
 
@@ -100,75 +127,13 @@ public:
     string Ihash(uint64_t key) override;
 };
 
-class QHasher : public Hasher {
-private:
-    uint64_t mask;
-    uint64_t kSize;
-    unsigned int Q = 28;
-    unsigned int key_remainder_bits;
-
-public:
-    explicit QHasher(uint64_t kSize);
-
-    QHasher(uint64_t kSize, int _Q);
-
-    Hasher *clone() override { return new QHasher(kSize, Q); }
-
-    // To set the Q if not initialized
-    void set_Q(int _Q);
-
-    uint64_t merge_Q_R(uint64_t &_Q, uint64_t &R);
-
-    void split_Q_R(uint64_t key, uint64_t &_Q, uint64_t &R);
-
-    uint64_t normal_hash(const string &key);
-
-    uint64_t normal_hash(uint64_t key);
-
-    uint64_t normal_Ihash(uint64_t key);
-
-
-    uint64_t hash(const string &key) override;
-
-    uint64_t hash(uint64_t key) override;
-
-    string Ihash(uint64_t key) override;
-};
-
-// TwoBitsHasher Canonical
-
-class TwoBitsHasher : public Hasher {
-private:
-    uint64_t kSize;
-public:
-    explicit TwoBitsHasher(uint64_t kSize);
-
-    Hasher *clone() override { return new TwoBitsHasher(kSize); }
-
-    uint64_t hash(const string &key) override;
-
-    uint64_t hash(uint64_t key) override;
-
-    string Ihash(uint64_t key) override;
-};
-
-
-// TwoBitsHasher nonCanonical
-
-class noncanonical_TwoBitsHasher : public TwoBitsHasher {
-private:
-    uint64_t kSize;
-public:
-
-    noncanonical_TwoBitsHasher(uint64_t kSize) : TwoBitsHasher(kSize) {
-        this->kSize = kSize;
-    }
-
-    Hasher *clone() override { return new noncanonical_TwoBitsHasher(kSize); }
-
-    uint64_t hash(const string &key) override;
-};
-
+/* ---------------------
+ Class noncanonical_IntegerHasher: inherits from class:IntegerHasher
+ Hashing direction: Reversible
+ Description:
+    Used in hashing kmers with kSize <= 32.
+    Returns the original non-canonical integerHash.
+--------------------- */
 
 class noncanonical_IntegerHasher : public IntegerHasher {
 private:
@@ -186,6 +151,97 @@ public:
 };
 
 
+/* ---------------------
+ Class TwoBitsHasher: inherits from class:Hasher
+ Hashing direction: Reversible
+ Description:
+    Used in hashing kmers with kSize <= 32.
+    This is not a real hashing, it's a conversion from A-C-G-T to 00-01-10-11.
+    Returns the canonical two bit representation.
+--------------------- */
+
+class TwoBitsHasher : public Hasher {
+private:
+    uint64_t kSize;
+public:
+    explicit TwoBitsHasher(uint64_t kSize);
+
+    Hasher *clone() override { return new TwoBitsHasher(kSize); }
+
+    uint64_t hash(const string &key) override;
+
+    uint64_t hash(uint64_t key) override;
+
+    string Ihash(uint64_t key) override;
+};
+
+/* ---------------------
+ Class noncanonical_TwoBitsHasher: inherits from class:TwoBitsHasher
+ Hashing direction: Reversible
+ Description:
+    Used in hashing kmers with kSize <= 32.
+    This is not a real hashing, it's a conversion from A-C-G-T to 00-01-10-11.
+    Returns the original non-canonical two bit representation.
+--------------------- */
+
+class noncanonical_TwoBitsHasher : public TwoBitsHasher {
+private:
+    uint64_t kSize;
+public:
+
+    explicit noncanonical_TwoBitsHasher(uint64_t kSize) : TwoBitsHasher(kSize) {
+        this->kSize = kSize;
+    }
+
+    Hasher *clone() override { return new noncanonical_TwoBitsHasher(kSize); }
+
+    uint64_t hash(const string &key) override;
+};
+
+/* ---------------------
+ Class QHasher: inherits from class:Hasher
+ Hashing direction: Irreversible
+ Description:
+    Used in hashing kmers with kSize <= 32.
+    Originally implemented to compress the index of kProcessor.
+    Currently unused and could be removed in future releases.
+--------------------- */
+
+class QHasher : public Hasher {
+private:
+    uint64_t mask;
+    uint64_t kSize;
+    unsigned int Q = 28;
+    unsigned int key_remainder_bits;
+
+public:
+    explicit QHasher(uint64_t kSize);
+
+    QHasher(uint64_t kSize, int Q);
+
+    Hasher *clone() override { return new QHasher(kSize, Q); }
+
+    // To set the Q if not initialized
+    void set_Q(int Q);
+
+    uint64_t merge_Q_R(uint64_t &Q, uint64_t &R);
+
+    void split_Q_R(uint64_t key, uint64_t &Q, uint64_t &R);
+
+    uint64_t normal_hash(const string &key);
+
+    uint64_t normal_hash(uint64_t key);
+
+    uint64_t normal_Ihash(uint64_t key);
+
+
+    uint64_t hash(const string &key) override;
+
+    uint64_t hash(uint64_t key) override;
+
+    string Ihash(uint64_t key) override;
+};
+
 template<class hashFnType>
 class wrapperHasher : public Hasher {
 private:
@@ -199,7 +255,7 @@ public:
         return new wrapperHasher(fn, kSize);
     }
 
-    uint64_t hash(const string &key) {
+    uint64_t hash(const string &key) override {
         return fn(kmer::str_to_canonical_int(key));
     }
 

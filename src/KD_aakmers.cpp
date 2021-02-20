@@ -1,6 +1,6 @@
 #include "kmerDecoder.hpp"
 
-void Kmers::seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) {
+void aaKmers::seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) {
 
     kmers.clear();
 
@@ -15,11 +15,11 @@ void Kmers::seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) {
 
 }
 
-void Kmers::extractKmers() {
+void aaKmers::extractKmers() {
 
     bool SHORT_SEQ = false;
 
-    for (int seqCounter = 0; seqCounter < Kmers::chunk_size && ((kseq_read(this->kseqObj)) >= 0); seqCounter++) {
+    for (int seqCounter = 0; seqCounter < aaKmers::chunk_size && ((kseq_read(this->kseqObj)) >= 0); seqCounter++) {
 
         uint32_t seq_length = string(this->kseqObj->seq.s).size();
 

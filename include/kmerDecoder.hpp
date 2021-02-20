@@ -6,9 +6,10 @@
 #include <parallel_hashmap/phmap.h>
 #include <cstdint>
 #include "HashUtils/hashutil.hpp"
+#include "HashUtils/aaHasher.hpp"
 #include <zlib.h>
 #include <cstdio>
-#include "kseq.h"
+#include <kseq/kseq.h>
 
 KSEQ_INIT(gzFile, gzread)
 
@@ -396,5 +397,65 @@ public:
     static kmerDecoder *initialize_hasher(int kmer_size, int hash_mode = 1);
 
     ~Minimizers(){}
+
+};
+
+
+/* 
+--------------------------------------------------------
+                        AA Kmers (Protein Seqs)
+--------------------------------------------------------
+*/
+
+
+class aaKmers : public kmerDecoder {
+
+private:
+    unsigned kSize{};
+
+    void extractKmers() override;
+
+public:
+
+    explicit aaKmers(int k_size, int hash_mode = 1) : kSize(k_size) {
+
+        if(kSize > 11){
+            throw "can't use aaKmer > 11";
+        }
+
+        this->hasher = new aaHasher(kSize);
+        this->slicing_mode = "kmers";
+        this->hash_mode = 1;
+        this->canonical = true;
+    };
+
+    aaKmers(const std::string &filename, unsigned int chunk_size, int kSize) {
+
+        if(kSize > 11){
+            throw "can't use aaKmer > 11";
+        }
+
+        this->kSize = kSize;
+        this->fileName = filename;
+        this->chunk_size = chunk_size;
+        this->initialize_kSeq();
+        this->hasher = new aaHasher(kSize);
+        this->hash_mode = 1;
+        this->canonical = true;
+        this->slicing_mode = "kmers";
+    }
+
+    void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) override;
+
+
+     void setHashingMode(int hash_mode, bool canonical = true) {
+        
+    }
+
+    int get_kSize() {
+        return this->kSize;
+    }
+
+    ~aaKmers() override{}
 
 };

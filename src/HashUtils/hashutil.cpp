@@ -14,6 +14,7 @@
  *                  Rob Patro (rob.patro@cs.stonybrook.edu)
  *                  Rob Johnson (rob@cs.stonybrook.edu)
  *   Organization:  Stony Brook University
+ *   Edited by: Mohamed Abuelanin (mabuelanin@gmail.com) UC Davis
  *
  * =====================================================================================
  */
