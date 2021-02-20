@@ -9,7 +9,7 @@
 #include "HashUtils/aaHasher.hpp"
 #include <zlib.h>
 #include <cstdio>
-#include "kseq.h"
+#include <kseq/kseq.h>
 
 KSEQ_INIT(gzFile, gzread)
 
