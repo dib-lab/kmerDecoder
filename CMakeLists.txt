@@ -2,7 +2,7 @@
 # kmerDecoder project
 # ----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14...3.20)
 
 # ---- Project Info ----
 
@@ -49,25 +49,32 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC -fopenmp -pedantic -O3 
 # ---- Create library ----
 
 CPMAddPackage(
-        NAME phmap
-        SOURCE_DIR ${PROJECT_SOURCE_DIR}/lib/parallel-hashmap
+        NAME kseq
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq
 )
 
 CPMAddPackage(
-        NAME kseq
-        SOURCE_DIR ${PROJECT_SOURCE_DIR}/lib/kseq
+        NAME PHMAP
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/parallel-hashmap
 )
+
+if (PHMAP_ADDED)
+
+ add_library(PHMAP INTERFACE IMPORTED)
+ target_include_directories(PHMAP INTERFACE ${PHMAP_SOURCE_DIR})
+
+endif()
 
 
 file(GLOB SOURCES
-        "${PROJECT_SOURCE_DIR}/src/kmerDecoder.cpp"
-        "${PROJECT_SOURCE_DIR}/src/KD_kmers.cpp"
-        "${PROJECT_SOURCE_DIR}/src/KD_skipmers.cpp"
-        "${PROJECT_SOURCE_DIR}/src/KD_minimizers.cpp"
-        "${PROJECT_SOURCE_DIR}/src/KD_aakmers.cpp"
-        "${PROJECT_SOURCE_DIR}/src/HashUtils/hashutil.cpp"
-        "${PROJECT_SOURCE_DIR}/src/HashUtils/aaHasher.cpp"
-        "${PROJECT_SOURCE_DIR}/src/Utils/kmer.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/kmerDecoder.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/KD_kmers.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/KD_skipmers.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/KD_minimizers.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/KD_aakmers.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/HashUtils/hashutil.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/HashUtils/aaHasher.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/Utils/kmer.cpp"
         )
 
 add_library(kmerDecoder ${SOURCES})
@@ -78,18 +85,16 @@ set(PHMAP_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/lib/parallel-hashmap")
 set(KMERDECODER_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 set(KSEQ_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/lib/kseq")
 
-# include(${CMAKE_SOURCE_DIR}/lib/parallel-hashmap/cmake/phmap.cmake)
 
 target_include_directories(
-        kmerDecoder PUBLIC $<BUILD_INTERFACE:${KMERDECODER_INCLUDE_DIRS}$<SEMICOLON>${kseq_SOURCE_DIR}$<SEMICOLON>${phmap_SOURCE_DIR}>
-        # kmerDecoder PUBLIC $<BUILD_INTERFACE:${KMERDECODER_INCLUDE_DIRS}$<SEMICOLON>${PHMAP_INCLUDE_DIRS}$<SEMICOLON>${KSEQ_INCLUDE_DIRS}>
+        kmerDecoder PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
 )
 
 #target_include_directories(kmerDecoder INTERFACE ${PHMAP_INCLUDE_DIRS} ${KSEQ_INCLUDE_DIRS} ${KMERDECODER_INCLUDE_DIRS})
 # being a cross-platform target, we enforce standards conformance on MSVC
 target_compile_options(kmerDecoder PUBLIC "$<$<BOOL:${MSVC}>:/permissive->")
-target_link_libraries(kmerDecoder z)
+target_link_libraries(kmerDecoder z kseq::kseq PHMAP)
 
 if (BUILD_BIN)
     message("Building kmerDecoder binaries")
@@ -113,5 +118,5 @@ packageProject(
         INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
         INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
         VERSION_HEADER "${VERSION_HEADER_LOCATION}"
-        DEPENDENCIES ""
+        DEPENDENCIES "kseq 1.3; PHMAP 1.0.0"
 )
