@@ -13,6 +13,7 @@ flat_hash_map<std::string,std::vector<kmer_row>>* kmerDecoder::getKmers(){
 void kmerDecoder::initialize_kSeq(){
     fp = gzopen(this->fileName.c_str(), "r");
     kseqObj = kseq_init(fp);
+    KS_FULL_COMMENT = true; // Allow retrieving full header from kseq
 }
 
 bool kmerDecoder::end() const{

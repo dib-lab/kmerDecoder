@@ -35,8 +35,7 @@ void Skipmers::extractKmers()
         std::string seq = kseqObj->seq.s;
         std::string id;
         id.append(kseqObj->name.s);
-        id.append(" ");
-        id.append(kseqObj->comment.s);
+        if(kseqObj->comment.l) id.append(kseqObj->comment.s);
 
         if(seq.size() < this->S){
             SHORT_SEQ = true;
