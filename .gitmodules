@@ -4,6 +4,3 @@
 [submodule "lib/doctest"]
 	path = lib/doctest
 	url = https://github.com/onqtam/doctest.git
-[submodule "lib/kseq"]
-	path = lib/kseq
-	url = https://github.com/mr-eyes/kseq
