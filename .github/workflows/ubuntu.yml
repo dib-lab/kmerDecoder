@@ -29,6 +29,13 @@ jobs:
 
       - name: install boost
         run: sudo apt-get install libboost-all-dev
+        
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+        
+      - name: install_cmake
+        run: pip install cmake  
 
       - name: configure
         run: cmake -Stest -Bbuild -DENABLE_TEST_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug
