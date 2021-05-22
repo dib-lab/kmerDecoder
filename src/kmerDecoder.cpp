@@ -24,7 +24,15 @@ std::string kmerDecoder::get_filename(){
     return this->fileName;
 }
 
-
-kmerDecoder * kmerDecoder::initialize_hasher(int kmer_size, int hash_mode){
-    return new Kmers(kmer_size, hash_mode);
+Hasher* kmerDecoder::initHasher(hashingModes HM, int kSize)
+{
+    switch (HM) {
+        case integer_hasher:return new IntegerHasher(kSize);
+        case mumur_hasher:return new MumurHasher(2038074761);
+        case TwoBits_hasher:return new TwoBitsHasher(kSize);
+        case nonCanonicalInteger_Hasher:return new noncanonical_IntegerHasher(kSize);
+        case protein_hasher:return new aaHasher_default(kSize);
+        case proteinDayhoff_hasher:return new aaHasher_dayhoff(kSize);
+        default: throw "unknown hashing mode";
+    }
 }

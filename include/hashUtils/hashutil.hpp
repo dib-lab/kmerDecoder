@@ -132,12 +132,12 @@ public:
     Returns the original non-canonical integerHash.
 --------------------- */
 
-class noncanonical_IntegerHasher : public IntegerHasher {
+class noncanonical_IntegerHasher : public Hasher {
 private:
     uint64_t kSize;
     uint64_t mask;
-public:
-    explicit noncanonical_IntegerHasher(uint64_t kSize) : IntegerHasher(kSize) {
+  public:
+    explicit noncanonical_IntegerHasher(uint64_t kSize){
         this->kSize = kSize;
         this->mask = BITMASK(2 * kSize);
     }
@@ -145,6 +145,8 @@ public:
     Hasher *clone() override { return new noncanonical_IntegerHasher(kSize); }
 
     uint64_t hash(const string &key) override;
+    uint64_t hash(uint64_t key) override;
+    string Ihash(uint64_t key) override;
 };
 
 
