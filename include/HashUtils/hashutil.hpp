@@ -31,8 +31,6 @@
 #include <unordered_map>
 #include "Utils/kmer.h"
 #include <algorithm>
-#include <boost/assign.hpp>
-using namespace boost::assign;
 
 
 using namespace std;
@@ -65,7 +63,6 @@ public:
 class bigKmerHasher : public Hasher {
 private:
     uint64_t kSize;
-    map<char, char> m = map_list_of ('A', 'T') ('T', 'A') ('G', 'C') ('C', 'G');
     std::hash<string> hasher;
 public:
     explicit bigKmerHasher(uint64_t kSize);

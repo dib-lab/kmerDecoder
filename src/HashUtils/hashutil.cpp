@@ -393,6 +393,18 @@ uint64_t noncanonical_IntegerHasher::hash(const string &kmer) {
 
 // _________ bigKmerHasher
 
+inline string bigKmerRevComplement(string DNAseq){
+  reverse(DNAseq.begin(), DNAseq.end());
+  for (char & i : DNAseq){
+    switch (i){
+      case 'A': i = 'T'; break;
+      case 'C': i = 'G'; break;
+      case 'G': i = 'C'; break;
+      case 'T': i = 'A'; break;
+    }
+  }
+  return DNAseq;
+}
 
 uint64_t bigKmerHasher::hash(uint64_t key) {
     return Hasher::hash(key);
@@ -407,11 +419,6 @@ uint64_t bigKmerHasher::hash(const string &key) {
 }
 
 string bigKmerHasher::get_canonical_kmer(const string &kmer) {
-    string revComp;
-    std::string::const_reverse_iterator it = kmer.crbegin();
-    while (it != kmer.crend()) {
-        revComp = revComp.append(1, m[*(it++)]);
-    };
-
+    string revComp = bigKmerRevComplement(kmer);
     return (kmer < revComp) ? kmer : revComp;
 }
