@@ -45,7 +45,7 @@ struct kmer_row {
 --------------------------------------------------------
 */
 
-flat_hash_map<std::tuple<enum readingModes, enum hashingModes>, bool> allowed_modes ({
+inline flat_hash_map<std::tuple<enum readingModes, enum hashingModes>, bool> allowed_modes ({
     {{KMERS, mumur_hasher}, true},
     {{SKIPMERS, mumur_hasher}, true},
     {{MINIMIZERS, mumur_hasher}, true},
