@@ -1,6 +1,6 @@
 #include <doctest/doctest.h>
 
-#include <HashUtils/aaHasher.hpp>
+#include <hashUtils/aaHasher.hpp>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
