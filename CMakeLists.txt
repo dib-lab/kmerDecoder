@@ -2,7 +2,7 @@
 # kmerDecoder project
 # ----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.14...3.20)
+cmake_minimum_required(VERSION 3.14)
 
 # ---- Project Info ----
 
@@ -29,7 +29,7 @@ include(cmake/CPM.cmake)
 CPMAddPackage(
         NAME PackageProject.cmake
         GITHUB_REPOSITORY TheLartians/PackageProject.cmake
-        VERSION 1.4.1
+        VERSION 1.6.0
 )
 
 
@@ -43,7 +43,7 @@ if (BUILD_BIN)
     add_definitions(-BUILD_BIN=1)
 endif ()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC -fopenmp -pedantic -O3 -oFast")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC -fopenmp -O3 -Ofast")
 
 
 # ---- Create library ----
@@ -66,20 +66,20 @@ if (PHMAP_ADDED)
 endif()
 
 
-file(GLOB SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/kmerDecoder.cpp"
+set(SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/src/KD_kmers.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/kmerDecoder.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/KD_skipmers.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/KD_minimizers.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/KD_aakmers.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/HashUtils/hashutil.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/HashUtils/aaHasher.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/hashUtils/aaHasher.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/hashUtils/hashutil.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/Utils/kmer.cpp"
         )
 
 add_library(kmerDecoder ${SOURCES})
 
-set_target_properties(kmerDecoder PROPERTIES CXX_STANDARD 17)
+set_target_properties(kmerDecoder PROPERTIES CXX_STANDARD 14)
 
 set(PHMAP_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/lib/parallel-hashmap")
 set(KMERDECODER_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")

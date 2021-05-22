@@ -1,6 +1,5 @@
 #include <doctest/doctest.h>
-
-#include <HashUtils/aaHasher.hpp>
+#include "kmerDecoder.hpp"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -12,12 +11,12 @@ char letters[20] = {'A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I',
 
 uint64_t get_kmer_int(string& kmer) {
   int kSize = kmer.size();
-  Hasher* hasher = new aaHasher(kSize);
+  Hasher* hasher = kmerDecoder::initHasher(protein_hasher, kSize);
   return hasher->hash(kmer);
 }
 
 string get_kmer_str(uint64_t& kmer, int& kSize) {
-  Hasher* hasher = new aaHasher(kSize);
+  Hasher* hasher = kmerDecoder::initHasher(protein_hasher, kSize);
   return hasher->Ihash(kmer);
 }
 

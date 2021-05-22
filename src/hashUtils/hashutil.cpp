@@ -19,7 +19,7 @@
  * =====================================================================================
  */
 
-#include "HashUtils/hashutil.hpp"
+#include "hashUtils/hashutil.hpp"
 #include "Utils/kmer.h"
 #include <iostream>
 #include <unordered_map>
@@ -378,6 +378,56 @@ uint64_t noncanonical_TwoBitsHasher::hash(const string &key) {
     return kmer::str_to_int(key);
 }
 
+// nonCanonical_IntegerHasher
+
+uint64_t noncanonical_IntegerHasher::hash(uint64_t key) {
+  key = (~key + (key << 21)) & mask; // key = (key << 21) - key - 1;
+  key = key ^ key >> 24;
+  key = ((key + (key << 3)) + (key << 8)) & mask; // key * 265
+  key = key ^ key >> 14;
+  key = ((key + (key << 2)) + (key << 4)) & mask; // key * 21
+  key = key ^ key >> 28;
+  key = (key + (key << 31)) & mask;
+  return key;
+}
+
+// The inversion of hash_64(). Modified from
+// <https://naml.us/blog/tag/invertible>
+string noncanonical_IntegerHasher::Ihash(uint64_t key) {
+  uint64_t tmp;
+
+  // Invert key = key + (key << 31)
+  tmp = (key - (key << 31));
+  key = (key - (tmp << 31)) & mask;
+
+  // Invert key = key ^ (key >> 28)
+  tmp = key ^ key >> 28;
+  key = key ^ tmp >> 28;
+
+  // Invert key *= 21
+  key = (key * 14933078535860113213ull) & mask;
+
+  // Invert key = key ^ (key >> 14)
+  tmp = key ^ key >> 14;
+  tmp = key ^ tmp >> 14;
+  tmp = key ^ tmp >> 14;
+  key = key ^ tmp >> 14;
+
+  // Invert key *= 265
+  key = (key * 15244667743933553977ull) & mask;
+
+  // Invert key = key ^ (key >> 24)
+  tmp = key ^ key >> 24;
+  key = key ^ tmp >> 24;
+
+  // Invert key = (~key) + (key << 21)
+  tmp = ~key;
+  tmp = ~(key - (tmp << 21));
+  tmp = ~(key - (tmp << 21));
+  key = ~(key - (tmp << 21)) & mask;
+
+  return kmer::int_to_str(key, kSize);
+}
 
 uint64_t noncanonical_IntegerHasher::hash(const string &kmer) {
     uint64_t key = kmer::str_to_int(kmer);
@@ -393,6 +443,18 @@ uint64_t noncanonical_IntegerHasher::hash(const string &kmer) {
 
 // _________ bigKmerHasher
 
+inline string bigKmerRevComplement(string DNAseq){
+  reverse(DNAseq.begin(), DNAseq.end());
+  for (char & i : DNAseq){
+    switch (i){
+      case 'A': i = 'T'; break;
+      case 'C': i = 'G'; break;
+      case 'G': i = 'C'; break;
+      case 'T': i = 'A'; break;
+    }
+  }
+  return DNAseq;
+}
 
 uint64_t bigKmerHasher::hash(uint64_t key) {
     return Hasher::hash(key);
@@ -407,11 +469,6 @@ uint64_t bigKmerHasher::hash(const string &key) {
 }
 
 string bigKmerHasher::get_canonical_kmer(const string &kmer) {
-    string revComp;
-    std::string::const_reverse_iterator it = kmer.crbegin();
-    while (it != kmer.crend()) {
-        revComp = revComp.append(1, m[*(it++)]);
-    };
-
+    string revComp = bigKmerRevComplement(kmer);
     return (kmer < revComp) ? kmer : revComp;
 }
