@@ -436,9 +436,10 @@ public:
     void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) override;
 
 
-    void setHashingMode(hashingModes HM) {
+    void setHashingMode(hashingModes HM, int _kSize = 0) {
+        if(_kSize) this->kSize = _kSize;
         this->hash_mode = HM;
-        this->hasher = kmerDecoder::initHasher(HM, kSize);
+        this->hasher = kmerDecoder::initHasher(HM, this->kSize);
     }
 
     int get_kSize() {
