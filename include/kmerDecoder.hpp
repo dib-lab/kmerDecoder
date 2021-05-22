@@ -95,7 +95,6 @@ protected:
     bool FILE_END = false;
 
     virtual void extractKmers() = 0;
-    static Hasher* initHasher(hashingModes HM, int kSize);
 
 
     // Mode 0: Murmar Hashing | Irreversible
@@ -103,6 +102,8 @@ protected:
     // Mode 2: TwoBitsHashing | Not considered hashing, just store the two bits representation
 
 public:
+    static Hasher* initHasher(hashingModes HM, int kSize);
+    
     static kmerDecoder *getInstance(readingModes RM, hashingModes HM, map<string, int> params) {
       if (!allowed_modes[{RM, HM}]) throw "incompatible reading and hashing modes";
 
@@ -141,7 +142,7 @@ public:
 
     std::string get_filename();
 
-    virtual void setHashingMode(hashingModes HM) = 0;
+    virtual void setHashingMode(hashingModes HM, int kSize) = 0;
 
     // hash single kmer
     uint64_t hash_kmer(const std::string & kmer_str) {
@@ -195,9 +196,10 @@ public:
         this->slicing_mode = "kmers";
     }
 
-    void setHashingMode(hashingModes HM) {
+    void setHashingMode(hashingModes HM, int _kSize = 0) {
+        if(_kSize) this->kSize = _kSize;
         this->hash_mode = HM;
-        this->hasher = kmerDecoder::initHasher(HM, kSize);
+        this->hasher = kmerDecoder::initHasher(HM, this->kSize);
     }
 
 
@@ -276,11 +278,12 @@ public:
         this->slicing_mode = "skipmers";
     }
 
-    void setHashingMode(hashingModes HM) {
+    void setHashingMode(hashingModes HM, int _kSize = 0) {
+        if(_kSize) this->k = _kSize;
         this->hash_mode = HM;
-        this->hasher = kmerDecoder::initHasher(HM, k);
+        this->hasher = kmerDecoder::initHasher(HM, this->k);
     }
-
+    
     void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers);
 
     int get_kSize() {
@@ -368,9 +371,10 @@ public:
         this->slicing_mode = "minimizers";
     }
 
-    void setHashingMode(hashingModes HM) {
+    void setHashingMode(hashingModes HM, int _kSize = 0) {
+        if(_kSize) this->k = _kSize;
         this->hash_mode = HM;
-        this->hasher = kmerDecoder::initHasher(HM, k);
+        this->hasher = kmerDecoder::initHasher(HM, this->k);
     }
 
     std::vector<mkmh_minimizer> getMinimizers(std::string &seq);
