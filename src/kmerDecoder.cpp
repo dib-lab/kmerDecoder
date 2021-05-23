@@ -39,8 +39,43 @@ Hasher* kmerDecoder::initHasher(hashingModes HM, int kSize)
 
 // -------------------------------------
 
+inline flat_hash_map<std::tuple<enum readingModes, enum hashingModes>, bool> allowed_modes ({
+    {{KMERS, mumur_hasher}, true},
+    {{SKIPMERS, mumur_hasher}, true},
+    {{MINIMIZERS, mumur_hasher}, true},
+    {{PROTEIN, mumur_hasher}, false},
+
+    {{KMERS, integer_hasher}, true},
+    {{SKIPMERS, integer_hasher}, true},
+    {{MINIMIZERS, integer_hasher}, true},
+    {{PROTEIN, integer_hasher}, false},
+
+    {{KMERS, TwoBits_hasher}, true},
+    {{SKIPMERS, TwoBits_hasher}, true},
+    {{MINIMIZERS, TwoBits_hasher}, true},
+    {{PROTEIN, TwoBits_hasher}, false},
+
+    {{KMERS, nonCanonicalInteger_Hasher}, true},
+    {{SKIPMERS, nonCanonicalInteger_Hasher}, true},
+    {{MINIMIZERS, nonCanonicalInteger_Hasher}, true},
+    {{PROTEIN, nonCanonicalInteger_Hasher}, false},
+
+    {{KMERS, protein_hasher}, false},
+    {{SKIPMERS, protein_hasher}, false},
+    {{MINIMIZERS, protein_hasher}, false},
+    {{PROTEIN, protein_hasher}, true},
+
+    {{KMERS, proteinDayhoff_hasher}, false},
+    {{SKIPMERS, proteinDayhoff_hasher}, false},
+    {{MINIMIZERS, proteinDayhoff_hasher}, false},
+    {{PROTEIN, proteinDayhoff_hasher}, true},
+});
+
  kmerDecoder * kmerDecoder::getInstance(readingModes RM, hashingModes HM, map<string, int> params) {
-      if (!allowed_modes[{RM, HM}]) throw "incompatible reading and hashing modes";
+      if (!allowed_modes[{RM, HM}]) {
+        cerr << "incompatible reading and hashing modes" << endl;
+        exit(1);
+        }
 
       // TODO validate parameters
 
