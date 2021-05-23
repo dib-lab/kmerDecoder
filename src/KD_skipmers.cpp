@@ -66,3 +66,9 @@ void Skipmers::extractKmers()
     }
 
 }
+
+string Skipmers::params_to_string(){
+    string params;
+    params = "k:" + to_string(this->k) +",m:" + to_string(this->m) + ",n:" + to_string(this->n);
+    return params;
+}

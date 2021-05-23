@@ -1,7 +1,6 @@
 #include <kseq/kseq.h>
 #include <parallel_hashmap/phmap.h>
 #include <zlib.h>
-
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
@@ -103,34 +102,16 @@ protected:
 
 public:
     static Hasher* initHasher(hashingModes HM, int kSize);
-    
-    static kmerDecoder *getInstance(readingModes RM, hashingModes HM, map<string, int> params) {
-      if (!allowed_modes[{RM, HM}]) throw "incompatible reading and hashing modes";
-
-      switch (RM){
-        case(KMERS):
-          break;
-        case SKIPMERS:
-          break;
-        case MINIMIZERS:
-          break;
-        case PROTEIN:
-          break;
-      }
-
-    }
-
-    static kmerDecoder * getInstance(string fileName, int chunkSize, readingModes RM, hashingModes HM, map<string, int> params){
-      return kmerDecoder::getInstance(RM, HM, std::move(params));
-  }
 
     flat_hash_map<std::string, std::vector<kmer_row>> *getKmers();
+
+    static kmerDecoder *getInstance(readingModes RM, hashingModes HM, map<string, int> params);
+    static kmerDecoder * getInstance(string fileName, int chunkSize, readingModes RM, hashingModes HM, map<string, int> params);
 
     Hasher * hasher{};
 
     hashingModes hash_mode = integer_hasher;
-    bool canonical = true;
-    std::string slicing_mode;
+    readingModes slicing_mode;
 
     virtual void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) = 0;
 
@@ -143,6 +124,9 @@ public:
     std::string get_filename();
 
     virtual void setHashingMode(hashingModes HM, int kSize) = 0;
+
+    static std::map<std::string, int> string_to_params(std::string const& s);
+    virtual string params_to_string() = 0;
 
     // hash single kmer
     uint64_t hash_kmer(const std::string & kmer_str) {
@@ -182,7 +166,7 @@ public:
 
     explicit Kmers(int k_size, hashingModes HM = integer_hasher) : kSize(k_size) {
         this->hasher = kmerDecoder::initHasher(HM, kSize);
-        this->slicing_mode = "kmers";
+        this->slicing_mode = KMERS;
         this->hash_mode = HM;
     };
 
@@ -193,7 +177,7 @@ public:
         this->initialize_kSeq();
         this->hasher = kmerDecoder::initHasher(HM, kSize);
         this->hash_mode = HM;
-        this->slicing_mode = "kmers";
+        this->slicing_mode = KMERS;
     }
 
     void setHashingMode(hashingModes HM, int _kSize = 0) {
@@ -204,6 +188,7 @@ public:
 
 
     void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) override;
+    string params_to_string() override;
 
 
     int get_kSize() {
@@ -250,7 +235,7 @@ public:
         this->S = S + ((S - 1) / this->m) * (this->n - this->m);
         this->hasher = kmerDecoder::initHasher(integer_hasher, k);
         this->hash_mode = integer_hasher;
-        this->slicing_mode = "skipmers";
+        this->slicing_mode = SKIPMERS;
     }
 
     Skipmers(const std::string &filename, unsigned int chunk_size, uint8_t m, uint8_t n, uint8_t k, int ORF = 0) {
@@ -275,7 +260,7 @@ public:
         this->initialize_kSeq();
         this->hasher = kmerDecoder::initHasher(integer_hasher, k);
         this->hash_mode = integer_hasher;
-        this->slicing_mode = "skipmers";
+        this->slicing_mode = SKIPMERS;
     }
 
     void setHashingMode(hashingModes HM, int _kSize = 0) {
@@ -285,6 +270,7 @@ public:
     }
     
     void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers);
+    string params_to_string() override;
 
     int get_kSize() {
         return this->k;
@@ -359,7 +345,7 @@ public:
         this->initialize_kSeq();
         this->hasher = kmerDecoder::initHasher(integer_hasher, k);
         this->hash_mode = integer_hasher;
-        this->slicing_mode = "minimizers";
+        this->slicing_mode = MINIMIZERS;
     }
 
     Minimizers(int k, int w) {
@@ -367,8 +353,7 @@ public:
         this->w = w;
         this->hasher = kmerDecoder::initHasher(integer_hasher, k);
         this->hash_mode = integer_hasher;
-        this->canonical = true;
-        this->slicing_mode = "minimizers";
+        this->slicing_mode = MINIMIZERS;
     }
 
     void setHashingMode(hashingModes HM, int _kSize = 0) {
@@ -381,6 +366,7 @@ public:
 
 
     void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers);
+    string params_to_string() override;
 
     int get_kSize() {
         return this->k;
@@ -414,7 +400,7 @@ public:
         }
 
         this->hasher = kmerDecoder::initHasher(HM, kSize);
-        this->slicing_mode = "kmers";
+        this->slicing_mode = KMERS;
         this->hash_mode = HM;
     };
 
@@ -430,10 +416,11 @@ public:
         this->initialize_kSeq();
         this->hasher = kmerDecoder::initHasher(HM, kSize);
         this->hash_mode = HM;
-        this->slicing_mode = "kmers";
+        this->slicing_mode = KMERS;
     }
 
     void seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) override;
+    string params_to_string() override;
 
 
     void setHashingMode(hashingModes HM, int _kSize = 0) {

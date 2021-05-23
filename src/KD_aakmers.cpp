@@ -47,3 +47,9 @@ void aaKmers::extractKmers() {
 
 }
 
+string aaKmers::params_to_string(){
+    string params;
+    params = "kSize:" + to_string(this->kSize);
+    return params;
+}
+

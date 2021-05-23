@@ -168,3 +168,9 @@ void Minimizers::seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers)
         }
 
 }
+
+string Minimizers::params_to_string(){
+    string params;
+    params = "k:" + to_string(this->k) +",w:" + to_string(this->w);
+    return params;
+}

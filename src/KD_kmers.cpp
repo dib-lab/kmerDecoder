@@ -47,3 +47,8 @@ void Kmers::extractKmers() {
 
 }
 
+string Kmers::params_to_string(){
+    string params;
+    params = "kSize:" + to_string(this->kSize);
+    return params;
+}
