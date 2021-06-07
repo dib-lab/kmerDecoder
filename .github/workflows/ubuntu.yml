@@ -12,10 +12,11 @@ env:
   CTEST_OUTPUT_ON_FAILURE: 1
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+  CC: g++
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -27,8 +28,8 @@ jobs:
           path: "**/cpm_modules"
           key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
 
-      - name: install boost
-        run: sudo apt-get install libboost-all-dev
+      - name: reinstall openmp
+        run:  sudo apt-get install --reinstall openmpi-bin libopenmpi-dev
         
       - uses: actions/setup-python@v2
         with:
