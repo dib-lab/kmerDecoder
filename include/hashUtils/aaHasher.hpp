@@ -27,10 +27,13 @@ public:
     uint64_t hash(uint64_t key) override;
 
     string Ihash(uint64_t key) override;
+
+    ~aaHasher_default(){}
 };
 
 class aaHasher_dayhoff : public aaHasher_default{
 public:
     explicit aaHasher_dayhoff(uint64_t kSize);
     string Ihash(uint64_t key) override;
+    ~aaHasher_dayhoff(){}
 };

@@ -50,6 +50,8 @@ public:
     }
 
     virtual Hasher *clone() { return this; };
+
+    ~Hasher(){}
 };
 
 
@@ -80,6 +82,8 @@ public:
     string Ihash(const string &key) {
         throw logic_error("Reverse Hash function is not/ cannot be implemented for this hash function.");
     }
+
+    ~bigKmerHasher(){};
 };
 
 /* ---------------------
@@ -99,6 +103,8 @@ public:
     Hasher *clone() override { return new MumurHasher(seed); }
 
     uint64_t hash(string kmer);
+
+    ~MumurHasher(){}
 };
 
 /* ---------------------
@@ -122,6 +128,8 @@ public:
     uint64_t hash(uint64_t key) override;
 
     string Ihash(uint64_t key) override;
+
+    ~IntegerHasher(){}
 };
 
 /* ---------------------
@@ -147,6 +155,8 @@ private:
     uint64_t hash(const string &key) override;
     uint64_t hash(uint64_t key) override;
     string Ihash(uint64_t key) override;
+    
+    ~noncanonical_IntegerHasher(){}
 };
 
 
@@ -172,6 +182,8 @@ public:
     uint64_t hash(uint64_t key) override;
 
     string Ihash(uint64_t key) override;
+
+    ~TwoBitsHasher(){}
 };
 
 /* ---------------------
@@ -195,6 +207,8 @@ public:
     Hasher *clone() override { return new noncanonical_TwoBitsHasher(kSize); }
 
     uint64_t hash(const string &key) override;
+
+    ~noncanonical_TwoBitsHasher(){}
 };
 
 /* ---------------------
@@ -239,6 +253,8 @@ public:
     uint64_t hash(uint64_t key) override;
 
     string Ihash(uint64_t key) override;
+
+    ~QHasher(){}
 };
 
 template<class hashFnType>
@@ -263,6 +279,7 @@ public:
         return fn(key);
     }
 
+    ~wrapperHasher(){}
 };
 
 
