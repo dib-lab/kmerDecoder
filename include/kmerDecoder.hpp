@@ -163,7 +163,12 @@ public:
         return this->kSize;
     }
 
-    ~Kmers() override{}
+    ~Kmers() override{
+        delete this->hasher;
+        kseq_destroy(this->kseqObj);
+        gzclose(this->fp);
+        this->kmers.clear();
+    }
 
 };
 
@@ -244,7 +249,12 @@ public:
         return this->k;
     }
 
-    ~Skipmers(){}
+    ~Skipmers() override {
+        delete this->hasher;
+        kseq_destroy(this->kseqObj);
+        gzclose(this->fp);
+        this->kmers.clear();
+    }
 };
 
 
@@ -340,7 +350,12 @@ public:
         return this->k;
     }
 
-    ~Minimizers(){}
+    ~Minimizers(){
+        delete this->hasher;
+        kseq_destroy(this->kseqObj);
+        gzclose(this->fp);
+        this->kmers.clear();
+    }
 
 };
 
@@ -401,6 +416,11 @@ public:
         return this->kSize;
     }
 
-    ~aaKmers() override{}
+    ~aaKmers() override{
+        delete this->hasher;
+        kseq_destroy(this->kseqObj);
+        gzclose(this->fp);
+        this->kmers.clear();
+    }
 
 };
