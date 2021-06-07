@@ -29,7 +29,7 @@ vector<string> Minimizers::kmerize(string seq, int k)
 {
     vector<string> ret(seq.length() - k, "");
 
-#pragma omp parallel for
+// #pragma omp parallel for
     for (int i = 0; i < seq.length() - k; i++)
     {
         string s = seq.substr(i, k);
