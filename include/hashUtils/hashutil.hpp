@@ -51,7 +51,7 @@ public:
 
     virtual Hasher *clone() { return this; };
 
-    ~Hasher(){}
+    virtual ~Hasher(){}
 };
 
 

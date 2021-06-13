@@ -163,12 +163,7 @@ public:
         return this->kSize;
     }
 
-    ~Kmers() override{
-        delete this->hasher;
-        kseq_destroy(this->kseqObj);
-        gzclose(this->fp);
-        this->kmers.clear();
-    }
+    ~Kmers() {}
 
 };
 
@@ -249,12 +244,7 @@ public:
         return this->k;
     }
 
-    ~Skipmers() override {
-        delete this->hasher;
-        kseq_destroy(this->kseqObj);
-        gzclose(this->fp);
-        this->kmers.clear();
-    }
+    ~Skipmers() {}
 };
 
 
@@ -351,7 +341,6 @@ public:
     }
 
     ~Minimizers(){
-        delete this->hasher;
         kseq_destroy(this->kseqObj);
         gzclose(this->fp);
         this->kmers.clear();
