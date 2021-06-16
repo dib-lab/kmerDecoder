@@ -154,6 +154,7 @@ public:
     void setHashingMode(hashingModes HM, int _kSize = 0) {
         if(_kSize) this->kSize = _kSize;
         this->hash_mode = HM;
+        delete this->hasher;
         this->hasher = kmerDecoder::initHasher(HM, this->kSize);
     }
 
@@ -237,6 +238,7 @@ public:
     void setHashingMode(hashingModes HM, int _kSize = 0) {
         if(_kSize) this->k = _kSize;
         this->hash_mode = HM;
+        delete this->hasher;
         this->hasher = kmerDecoder::initHasher(HM, this->k);
     }
     
@@ -330,6 +332,7 @@ public:
     void setHashingMode(hashingModes HM, int _kSize = 0) {
         if(_kSize) this->k = _kSize;
         this->hash_mode = HM;
+        delete this->hasher;
         this->hasher = kmerDecoder::initHasher(HM, this->k);
     }
 
@@ -401,6 +404,7 @@ public:
     void setHashingMode(hashingModes HM, int _kSize = 0) {
         if(_kSize) this->kSize = _kSize;
         this->hash_mode = HM;
+        delete this->hasher;
         this->hasher = kmerDecoder::initHasher(HM, this->kSize);
     }
 
