@@ -1,3 +1,6 @@
+#ifndef KMERDECODER_HPP
+#define KMERDECODER_HPP
+
 #include <kseq/kseq.h>
 #include <parallel_hashmap/phmap.h>
 #include <zlib.h>
@@ -413,3 +416,4 @@ public:
     }
 
 };
+#endif

@@ -1,3 +1,6 @@
+#ifndef AAHASHER_HPP
+#define AAHASHER_HPP
+
 #include "hashUtils/hashutil.hpp"
 #include <unordered_map>
 
@@ -37,3 +40,5 @@ public:
     string Ihash(uint64_t key) override;
     ~aaHasher_dayhoff(){}
 };
+
+#endif
