@@ -373,7 +373,7 @@ public:
 
     explicit aaKmers(int k_size, hashingModes HM = protein_hasher) : kSize(k_size) {
 
-        if(kSize > 11){
+        if((kSize > 11 && HM == protein_hasher) || (kSize > 19 && HM == proteinDayhoff_hasher)){
             throw "can't use aaKmer > 11";
         }
 

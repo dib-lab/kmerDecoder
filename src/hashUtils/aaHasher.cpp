@@ -81,7 +81,7 @@ string aaHasher_default::Ihash(uint64_t aa_int_kmer) {
 // DAYHOFF
 
 aaHasher_dayhoff::aaHasher_dayhoff(uint64_t kSize) : aaHasher_default(kSize) {
-  // TODO: Increase max kmer size
+    
   this->kSize = kSize;
   this->complete_amino_to_int = {
       {'C', 0},
@@ -96,6 +96,19 @@ aaHasher_dayhoff::aaHasher_dayhoff(uint64_t kSize) : aaHasher_default(kSize) {
 
 
 }
+
+uint64_t aaHasher_dayhoff::hash(const string &aa_str_kmer) {
+
+    uint64_t hash_val = 0;
+    for (auto const &ch : aa_str_kmer) {
+        uint8_t aa_int = complete_amino_to_int[ch];
+        hash_val = hash_val | aa_int;
+        hash_val = hash_val << 3;
+    }
+
+    return hash_val >> 3;
+}
+
 string aaHasher_dayhoff::Ihash(uint64_t key)
 {
     throw "Can't reverse hash Dayhoff encoding";
