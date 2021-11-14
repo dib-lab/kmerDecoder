@@ -37,6 +37,7 @@ public:
 class aaHasher_dayhoff : public aaHasher_default{
 public:
     explicit aaHasher_dayhoff(uint64_t kSize);
+    uint64_t hash(const string &key) override;
     string Ihash(uint64_t key) override;
     ~aaHasher_dayhoff(){}
 };
