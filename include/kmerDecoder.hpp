@@ -111,7 +111,6 @@ public:
     }
 
     virtual ~kmerDecoder(){
-        delete this->hasher;
         kseq_destroy(this->kseqObj);
         gzclose(this->fp);
         this->kmers.clear();
