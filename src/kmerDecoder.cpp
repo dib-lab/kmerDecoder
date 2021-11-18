@@ -125,3 +125,12 @@ inline flat_hash_map<std::tuple<enum readingModes, enum hashingModes>, bool> all
 
     return m;
   }
+
+
+bool valid_kmer(const string& kmer) {
+    for (int i = 0; i < kmer.length(); i++) {
+        char c = kmer[i];
+        if (c != 'A' && c != 'T' && c != 'G' && c != 'C') { return false; }
+    }
+    return true;
+}

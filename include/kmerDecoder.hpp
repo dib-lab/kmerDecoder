@@ -41,6 +41,10 @@ struct kmer_row {
     uint64_t hash;
 };
 
+
+bool valid_kmer(const string& kmer);
+
+
 /* 
 --------------------------------------------------------
                         InputModule:Parent
@@ -66,10 +70,6 @@ protected:
 
     virtual void extractKmers() = 0;
 
-
-    // Mode 0: Murmar Hashing | Irreversible
-    // Mode 1: Integer Hashing | Reversible | Full Hashing
-    // Mode 2: TwoBitsHashing | Not considered hashing, just store the two bits representation
 
 public:
     static Hasher* initHasher(hashingModes HM, int kSize);

@@ -6,6 +6,8 @@ void aaKmers::seq_to_kmers(std::string &seq, std::vector<kmer_row> &kmers) {
 
     kmers.reserve(seq.size());
 
+    for (auto & c: seq) c = toupper(c);
+
     for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++) {
         kmer_row kmer;
         kmer.str = seq.substr(i, this->kSize);
@@ -31,7 +33,7 @@ void aaKmers::extractKmers() {
         if(kseqObj->comment.l) id.append(kseqObj->comment.s);
 
         this->kmers[id].reserve(seq.size());
-
+        for (auto & c: seq) c = toupper(c);
         for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++) {
             kmer_row kmer;
             kmer.str = seq.substr(i, this->kSize);
