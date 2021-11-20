@@ -38,7 +38,6 @@ void Kmers::extractKmers() {
         for (unsigned long i = 0; i < seq.size() - this->kSize + 1; i++) {
             kmer_row kmer;
             kmer.str = seq.substr(i, this->kSize);
-            cerr << kmer.str << " : " << valid_kmer(kmer.str) << endl;
             if (!valid_kmer(kmer.str)) continue;
             kmer.hash = this->hasher->hash(kmer.str);
             this->kmers[id].push_back(kmer);
