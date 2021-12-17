@@ -31,6 +31,7 @@
 #include <unordered_map>
 #include "Utils/kmer.h"
 #include <algorithm>
+#include <iostream>
 
 
 using namespace std;
@@ -102,7 +103,8 @@ public:
 
     Hasher *clone() override { return new MumurHasher(seed); }
 
-    uint64_t hash(string kmer);
+    uint64_t hash(const string & Skey) override;
+    // uint64_t hash(uint64_t key) override;
 
     ~MumurHasher(){}
 };

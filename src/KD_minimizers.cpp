@@ -113,6 +113,7 @@ void Minimizers::extractKmers()
     for (int seqCounter = 0; seqCounter < this->chunk_size && ((kseq_read(this->kseqObj)) >= 0); seqCounter++) {
 
         std::string seq = kseqObj->seq.s;
+        for (auto & c: seq) c = toupper(c);
         std::string id;
         id.append(kseqObj->name.s);
         if(kseqObj->comment.l) id.append(kseqObj->comment.s);
@@ -133,6 +134,7 @@ void Minimizers::extractKmers()
         {
             kmer_row kmer;
             kmer.str = z.seq;
+            if (!valid_kmer(kmer.str)) continue;
             kmer.hash = this->hasher->hash(kmer.str);
             this->kmers[id].push_back(kmer);
         }
@@ -152,7 +154,7 @@ void Minimizers::seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers)
     vector<mkmh_minimizer> ret;
     vector<mkmh_minimizer> kmert;
     kmert = kmer_tuples(seq, this->k);
-    
+    for (auto & c: seq) c = toupper(c);
     for (unsigned long i = 0; i + this->w < kmert.size(); ++i){
             // get and sort kmers in window (i, i + w)
             vector<mkmh_minimizer> window_kmers(kmert.begin() + i, kmert.begin() + i + this->w);
@@ -163,6 +165,7 @@ void Minimizers::seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers)
     for (auto z : v_set(ret)){
             kmer_row kmer;
             kmer.str = z.seq;
+            if (!valid_kmer(kmer.str)) continue;
             kmer.hash = this->hasher->hash(kmer.str);
             kmers.push_back(kmer);
         }

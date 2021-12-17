@@ -4,7 +4,7 @@ void Skipmers::seq_to_kmers(std::string & seq, std::vector <kmer_row> & kmers){
 
     kmers.clear();
     kmers.reserve(seq.size());
-
+    for (auto & c: seq) c = toupper(c);
     std::string ORF_SEQ = "";
     for(auto const & start : this->ORFs){
 
@@ -43,7 +43,7 @@ void Skipmers::extractKmers()
         }
 
         this->kmers[id].reserve(seq.size());
-
+        for (auto & c: seq) c = toupper(c);
         for(auto const & start : this->ORFs){
 
             for(unsigned long i = start; i < seq.size(); i+=this->n){
@@ -53,6 +53,7 @@ void Skipmers::extractKmers()
             for(unsigned long j = 0; j < ORF_SEQ.size() - this->k + 1; j++){
                 kmer_row kmer;
                 kmer.str = ORF_SEQ.substr(j,this->k);
+                if (!valid_kmer(kmer.str)) continue;
                 kmer.hash = this->hasher->hash(kmer.str);
                 this->kmers[id].push_back(kmer);
             }
