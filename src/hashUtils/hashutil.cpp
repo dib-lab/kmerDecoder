@@ -37,6 +37,18 @@ using namespace std;
 
 // 64-bit hash for 64-bit platforms
 
+inline string str_canonical(const string& kmer) {
+    auto kmer_rev = kmer;
+    std::reverse(kmer_rev.begin(), kmer_rev.end());
+    for (size_t j = 0; j < kmer_rev.length(); ++j) {
+        if (kmer_rev[j] == 'A') kmer_rev[j] = 'T';
+        else if (kmer_rev[j] == 'T') kmer_rev[j] = 'A';
+        else if (kmer_rev[j] == 'C') kmer_rev[j] = 'G';
+        else if (kmer_rev[j] == 'G') kmer_rev[j] = 'C';
+    }
+    return kmer < kmer_rev ? kmer : kmer_rev;
+}
+
 uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed )
 {
 	const uint64_t m = 0xc6a4a7935bd1e995;
@@ -80,9 +92,10 @@ uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed )
 	return h;
 } 
 
-uint64_t MumurHasher::hash(const string & Skey) {
-    const char *c = Skey.c_str();
-    return MurmurHash64A(c, Skey.size(), this->seed);
+uint64_t MumurHasher::hash(const string & kmer) {
+    string canonical_kmer = str_canonical(kmer);
+    const char *c = canonical_kmer.c_str();
+    return MurmurHash64A(c, canonical_kmer.size(), this->seed);
 }
 
 
