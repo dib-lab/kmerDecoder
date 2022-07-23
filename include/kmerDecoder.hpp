@@ -20,6 +20,15 @@ KSEQ_INIT(gzFile, gzread)
 
 using phmap::flat_hash_map;
 
+// using KMERS_MAP = parallel_flat_hash_map<std::string, std::vector<kmer_row>,
+//         phmap::priv::hash_default_hash<std::string>,
+//         phmap::priv::hash_default_eq<std::string>,
+//         std::allocator<std::pair<const std::string,
+//         std::vector<kmer_row>>>,
+//         1
+//         // ,std::mutex
+//         >;
+
 enum readingModes{
   KMERS = 1,
   SKIPMERS = 2,
